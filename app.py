@@ -14,11 +14,11 @@ from pydantic import BaseModel
 
 import db
 import notify
-from config import BOT_TOKEN, HOST, PORT, REMINDER_HOUR, TIMEZONE
+from config import BOT_TOKEN, DB_PATH, HOST, PHOTOS_DIR, PORT, REMINDER_HOUR, TIMEZONE
 
 STATIC = os.path.join(os.path.dirname(__file__), "static")
-PHOTOS_DIR = os.getenv("PHOTOS_DIR", os.path.join(os.path.dirname(__file__), "photos"))
 os.makedirs(PHOTOS_DIR, exist_ok=True)
+os.makedirs(os.path.dirname(os.path.abspath(DB_PATH)) or ".", exist_ok=True)
 MAX_PHOTO_MB = 10
 SAFE_PHOTO = re.compile(r"^[a-f0-9]{32}\.(jpg|jpeg|png|webp)$")
 
