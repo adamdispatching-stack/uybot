@@ -79,11 +79,14 @@ main{padding:16px 14px;max-width:640px;margin:0 auto}
 const I18N = {
   ru:{ sale:"🏷 Продажа", rent:"🔑 Аренда", call:"📞 Позвонить",
        empty:"Пока нет доступных объектов", per_month:"/ месяц", sum:"сум",
-       district:"Район", title_sale:"Продажа", title_rent:"Аренда" },
+       district:"Район", title_sale:"Продажа", title_rent:"Аренда",
+       back_all:"← Все объекты", not_found:"Объект не найден или уже занят" },
   uz:{ sale:"🏷 Sotuv", rent:"🔑 Ijara", call:"📞 Qo'ng'iroq qilish",
        empty:"Hozircha bo'sh uylar yo'q", per_month:"/ oy", sum:"so'm",
-       district:"Tuman", title_sale:"Sotuv", title_rent:"Ijara" },
+       district:"Tuman", title_sale:"Sotuv", title_rent:"Ijara",
+       back_all:"← Barcha uylar", not_found:"Uy topilmadi yoki allaqachon band" },
 };
+const ONE_ID = (location.pathname.match(/^\/share\/(\d+)\/?$/) || [])[1] || null;
 let LANG = localStorage.getItem("uyshare_lang") ||
   (navigator.language||"").startsWith("uz") ? "uz" : "ru";
 if (!I18N[LANG]) LANG = "ru";
@@ -106,12 +109,37 @@ function toggleLang(){
 }
 function setTab(tab){ TAB = tab; render(); }
 
+function cardHtml(h){
+  const photos = h.photos.length
+    ? `<div class="ph-wrap"><div class="ph-scroll">` +
+      h.photos.map(f=>`<img src="/photos/${f}" alt="" loading="lazy">`).join("") +
+      `</div>${h.photos.length>1?`<div class="ph-count">📷 ${h.photos.length}</div>`:""}</div>`
+    : `<div class="ph-wrap"><div class="ph-none">🏠</div></div>`;
+  const price = h.list_price
+    ? `<div class="price">${fmt(h.list_price, h.list_currency)}
+       ${h.deal_type==="rent"?`<span class="per">${t("per_month")}</span>`:""}</div>` : "";
+  const nav = ONE_ID ? "" : ` onclick="location.href='/share/${h.id}'" style="cursor:pointer"`;
+  return `<div class="card"${nav}>${photos}<div class="body">
+    ${price}
+    <div class="addr">📍 ${esc(h.address)}</div>
+    ${h.district?`<div class="muted">${t("district")}: ${esc(h.district)}</div>`:""}
+    ${h.public_desc?`<div class="desc">${esc(h.public_desc)}</div>`:""}
+    <span class="chip ${h.deal_type==='sale'?'gold':'blue'}">${t(h.deal_type==='sale'?'title_sale':'title_rent')}</span>
+  </div></div>`;
+}
+
 function render(){
   document.getElementById("langLabel").textContent = LANG === "ru" ? "UZ" : "RU";
-  document.getElementById("tb-sale").textContent = t("sale");
-  document.getElementById("tb-rent").textContent = t("rent");
-  document.getElementById("tb-sale").className = TAB==="sale" ? "active" : "";
-  document.getElementById("tb-rent").className = TAB==="rent" ? "active" : "";
+  const tabs = document.querySelector(".tabs");
+  if (ONE_ID){
+    tabs.innerHTML = `<button class="active" style="flex:none;padding:11px 18px"
+      onclick="location.href='/share'">${t("back_all")}</button>`;
+  } else {
+    document.getElementById("tb-sale").textContent = t("sale");
+    document.getElementById("tb-rent").textContent = t("rent");
+    document.getElementById("tb-sale").className = TAB==="sale" ? "active" : "";
+    document.getElementById("tb-rent").className = TAB==="rent" ? "active" : "";
+  }
   if (!DATA) return;
   if (DATA.agency_name)
     document.getElementById("brand").textContent = "🏠 " + DATA.agency_name;
@@ -122,29 +150,21 @@ function render(){
     cl.href = "tel:" + DATA.contact_phone.replace(/[^+\d]/g,"");
     document.body.style.paddingBottom = "90px";
   }
-  const items = DATA.listings.filter(x => x.deal_type === TAB);
   const list = document.getElementById("list");
+  if (ONE_ID){
+    list.innerHTML = DATA.listing ? cardHtml(DATA.listing)
+      : `<div class="empty">${t("not_found")}</div>`;
+    return;
+  }
+  const items = DATA.listings.filter(x => x.deal_type === TAB);
   if (!items.length){ list.innerHTML = `<div class="empty">${t("empty")}</div>`; return; }
-  list.innerHTML = items.map(h => {
-    const photos = h.photos.length
-      ? `<div class="ph-wrap"><div class="ph-scroll">` +
-        h.photos.map(f=>`<img src="/photos/${f}" alt="" loading="lazy">`).join("") +
-        `</div>${h.photos.length>1?`<div class="ph-count">📷 ${h.photos.length}</div>`:""}</div>`
-      : `<div class="ph-wrap"><div class="ph-none">🏠</div></div>`;
-    const price = h.list_price
-      ? `<div class="price">${fmt(h.list_price, h.list_currency)}
-         ${h.deal_type==="rent"?`<span class="per">${t("per_month")}</span>`:""}</div>` : "";
-    return `<div class="card">${photos}<div class="body">
-      ${price}
-      <div class="addr">📍 ${esc(h.address)}</div>
-      ${h.district?`<div class="muted">${t("district")}: ${esc(h.district)}</div>`:""}
-      ${h.public_desc?`<div class="desc">${esc(h.public_desc)}</div>`:""}
-      <span class="chip ${h.deal_type==='sale'?'gold':'blue'}">${t(h.deal_type==='sale'?'title_sale':'title_rent')}</span>
-    </div></div>`;
-  }).join("");
+  list.innerHTML = items.map(cardHtml).join("");
 }
 
-fetch("/api/public/listings").then(r=>r.json()).then(d => { DATA = d; render(); });
+const API_URL = ONE_ID ? `/api/public/listings/${ONE_ID}` : "/api/public/listings";
+fetch(API_URL)
+  .then(r => r.ok ? r.json() : { listing: null, listings: [], contact_phone: "", agency_name: "" })
+  .then(d => { DATA = d; render(); });
 render();
 </script>
 </body>

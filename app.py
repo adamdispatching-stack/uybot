@@ -533,9 +533,32 @@ def api_public_listings():
             "agency_name": db.get_setting("agency_name", "")}
 
 
+@app.get("/api/public/listings/{hid}")
+def api_public_listing(hid: int):
+    """NO AUTH — single listing, only if available and public."""
+    listing = db.public_listing(hid)
+    if not listing:
+        raise HTTPException(404, "not available")
+    return {"listing": listing,
+            "contact_phone": db.get_setting("contact_phone", ""),
+            "agency_name": db.get_setting("agency_name", "")}
+
+
 @app.get("/share")
 def share_page():
     return FileResponse(os.path.join(STATIC, "share.html"))
+
+
+@app.get("/share/{hid}")
+def share_one_page(hid: int):
+    return FileResponse(os.path.join(STATIC, "share.html"))
+
+
+@app.get("/{hid}")
+def share_short(hid: int):
+    """domain/5 → public page of house 5."""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(f"/share/{hid}")
 
 
 # ------------------- analytics -------------------

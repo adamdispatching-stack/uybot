@@ -690,6 +690,8 @@ function houseDetailHtml(h){
   }
 
   html += `<div class="btn-row">
+    ${(h.public??1) && h.status==='available' ? `<button class="btn small secondary"
+      onclick="copyVal(this)" data-v="${location.origin}/share/${h.id}">🔗 ${t("copy_link")}</button>` : ""}
     <button class="btn small secondary" onclick="openExpenseForm(${h.id})">🧾 ${t("add_expense")}</button>
     <button class="btn small secondary" onclick="openPartnerForm(${h.id})">🤝 ${t("add_partner")}</button>
     ${h.status!=='sold'?`<button class="btn small secondary" onclick="openSoldForm(${h.id})">✅ ${t("mark_sold")}</button>`:""}

@@ -564,6 +564,20 @@ def due_tasks(today_iso):
 
 
 # ---------------- public listings ----------------
+def public_listing(hid):
+    with conn() as c:
+        h = c.execute("""SELECT id, address, district, deal_type, list_price,
+                         list_currency, public_desc FROM houses
+                         WHERE id=? AND status='available' AND COALESCE(public,1)=1""",
+                      (hid,)).fetchone()
+        if not h:
+            return None
+        d = dict(h)
+        d["photos"] = [p["filename"] for p in c.execute(
+            "SELECT filename FROM photos WHERE house_id=? ORDER BY id", (hid,)).fetchall()]
+        return d
+
+
 def public_listings():
     with conn() as c:
         houses = c.execute("""SELECT id, address, district, deal_type, list_price,
