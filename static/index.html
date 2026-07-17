@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UyWeb</title>
+<style>
+:root{
+  --bg:#f4f5f7; --card:#ffffff; --text:#1a1d21; --muted:#6b7280;
+  --brand:#2563eb; --brand-dark:#1d4ed8; --green:#059669; --red:#dc2626;
+  --amber:#d97706; --blue:#2563eb; --border:#e5e7eb; --radius:14px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);color:var(--text);font-size:16px;
+  padding-bottom:calc(70px + env(safe-area-inset-bottom))}
+h1,h2,h3{margin:0}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:16px;width:100%;padding:12px;
+  border:1.5px solid var(--border);border-radius:10px;background:#fff;color:var(--text);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--brand)}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 5px}
+.hide{display:none!important}
+
+/* header */
+header{position:sticky;top:0;z-index:20;background:var(--brand);color:#fff;
+  padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;
+  justify-content:space-between;align-items:center}
+header .title{font-size:18px;font-weight:700}
+.lang-btn{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:20px;
+  padding:6px 14px;font-size:14px;font-weight:600}
+
+/* bottom nav */
+nav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:#fff;
+  border-top:1px solid var(--border);display:flex;
+  padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:none;padding:8px 0 6px;font-size:11px;
+  color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button .ico{font-size:22px}
+nav button.active{color:var(--brand);font-weight:700}
+
+/* content */
+main{padding:14px 14px 20px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card.tap{cursor:pointer}
+.card.tap:active{transform:scale(.99)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.muted{color:var(--muted);font-size:13px}
+.big{font-size:18px;font-weight:700}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+.chip.green{background:#d1fae5;color:#065f46}
+.chip.blue{background:#dbeafe;color:#1e40af}
+.chip.red{background:#fee2e2;color:#991b1b}
+.chip.amber{background:#fef3c7;color:#92400e}
+.chip.gray{background:#e5e7eb;color:#374151}
+
+/* filters */
+.filters{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;-webkit-overflow-scrolling:touch}
+.filters button{white-space:nowrap;border:1.5px solid var(--border);background:#fff;
+  border-radius:20px;padding:7px 14px;font-size:14px;font-weight:600;color:var(--muted)}
+.filters button.active{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* buttons */
+.btn{display:block;width:100%;background:var(--brand);color:#fff;border:none;
+  border-radius:12px;padding:14px;font-size:16px;font-weight:700;margin-top:16px}
+.btn:active{background:var(--brand-dark)}
+.btn.secondary{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
+.btn.danger{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.small{width:auto;display:inline-block;padding:9px 16px;font-size:14px;margin-top:0}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn-row .btn{margin-top:0;flex:1;min-width:130px}
+
+/* FAB */
+.fab{position:fixed;right:18px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:19;
+  width:58px;height:58px;border-radius:50%;background:var(--brand);color:#fff;border:none;
+  font-size:30px;box-shadow:0 4px 14px rgba(37,99,235,.45);line-height:1}
+
+/* overlay sheet */
+.sheet{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;
+  padding-bottom:40px;animation:slideup .18s ease-out}
+@keyframes slideup{from{transform:translateY(30px);opacity:.5}to{transform:none;opacity:1}}
+.sheet .bar{position:sticky;top:0;z-index:5;background:var(--brand);color:#fff;
+  padding:calc(12px + env(safe-area-inset-top)) 14px 12px;display:flex;align-items:center;gap:10px}
+.sheet .bar button{background:none;border:none;color:#fff;font-size:24px;padding:0 4px}
+.sheet .bar .title{font-size:17px;font-weight:700;flex:1}
+.sheet .inner{padding:14px;max-width:640px;margin:0 auto}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;
+  align-items:flex-end;justify-content:center}
+.modal{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:640px;
+  max-height:88vh;overflow-y:auto;padding:18px 16px calc(24px + env(safe-area-inset-bottom));
+  animation:slideup .18s ease-out}
+.modal h3{font-size:17px;margin-bottom:4px}
+
+.seg{display:flex;gap:8px}
+.seg button{flex:1;border:1.5px solid var(--border);background:#fff;border-radius:10px;
+  padding:11px;font-size:15px;font-weight:600;color:var(--muted)}
+.seg button.active{border-color:var(--brand);color:var(--brand);background:#eff6ff}
+
+.list-line{padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.list-line:last-child{border-bottom:none}
+.section-title{font-size:14px;font-weight:700;color:var(--muted);margin:18px 0 8px;
+  text-transform:uppercase;letter-spacing:.4px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:#fff;border-radius:var(--radius);padding:14px;
+  box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.stat .n{font-size:26px;font-weight:800}
+.stat .l{font-size:12.5px;color:var(--muted);font-weight:600}
+.empty{color:var(--muted);text-align:center;padding:34px 10px;font-size:15px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);z-index:99;
+  bottom:calc(90px + env(safe-area-inset-bottom));background:#1a1d21;color:#fff;
+  padding:11px 20px;border-radius:24px;font-size:14.5px;font-weight:600;
+  box-shadow:0 4px 14px rgba(0,0,0,.3);max-width:88vw}
+.login-wrap{max-width:380px;margin:0 auto;padding:56px 22px}
+.login-wrap .logo{text-align:center;font-size:44px}
+.login-wrap h1{text-align:center;font-size:22px;margin:8px 0 26px}
+.err{color:var(--red);font-size:14px;margin-top:10px;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN / SETUP ===== -->
+<div id="authView" class="hide">
+  <div class="login-wrap">
+    <div class="logo">🏠</div>
+    <h1 id="authTitle">UyWeb</h1>
+    <div id="setupHint" class="muted hide" style="text-align:center;margin-bottom:14px"></div>
+    <label data-i18n="username"></label>
+    <input id="authUser" autocomplete="username">
+    <label data-i18n="password"></label>
+    <input id="authPass" type="password" autocomplete="current-password">
+    <div id="authNameWrap" class="hide">
+      <label data-i18n="your_name"></label>
+      <input id="authName">
+    </div>
+    <button class="btn" id="authBtn"></button>
+    <div id="authErr" class="err hide"></div>
+    <div style="text-align:center;margin-top:22px">
+      <button class="lang-btn" style="background:#e5e7eb;color:#374151" onclick="toggleLang()">RU / UZ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div id="mainView" class="hide">
+  <header>
+    <div class="title">🏠 UyWeb</div>
+    <button class="lang-btn" onclick="toggleLang()"><span id="langLabel">UZ</span></button>
+  </header>
+  <main id="content"></main>
+  <button class="fab hide" id="fab" onclick="openHouseForm()">+</button>
+  <nav>
+    <button id="tab-houses" onclick="setTab('houses')"><span class="ico">🏠</span><span data-i18n="tab_houses"></span></button>
+    <button id="tab-tenants" onclick="setTab('tenants')"><span class="ico">👥</span><span data-i18n="tab_tenants"></span></button>
+    <button id="tab-reports" onclick="setTab('reports')"><span class="ico">📊</span><span data-i18n="tab_reports"></span></button>
+    <button id="tab-settings" onclick="setTab('settings')"><span class="ico">⚙️</span><span data-i18n="tab_settings"></span></button>
+  </nav>
+</div>
+
+<div id="overlays"></div>
+
+<script>
+/* ================= i18n ================= */
+const I18N = {
+ru:{
+ username:"Логин", password:"Пароль", your_name:"Ваше имя", login:"Войти",
+ setup:"Создать администратора", setup_hint:"Первый запуск: создайте аккаунт администратора",
+ tab_houses:"Объекты", tab_tenants:"Арендаторы", tab_reports:"Отчёты", tab_settings:"Настройки",
+ f_all:"Все", f_sale:"Продажа", f_rent_free:"Свободные", f_rented:"Сданные", f_sold:"Проданные",
+ st_available:"Свободен", st_rented:"Сдан", st_sold:"Продан", st_reserved:"Бронь",
+ deal_sale:"Продажа", deal_rent:"Аренда",
+ no_houses:"Пока нет объектов.\nНажмите «+», чтобы добавить.",
+ add_house:"Новый объект", edit_house:"Редактировать", address:"Адрес", district:"Район",
+ deal_type:"Тип", purchase_price:"Цена покупки", currency:"Валюта", owner:"Владелец",
+ owner_phone:"Телефон владельца", notes:"Заметки", save:"Сохранить", cancel:"Отмена",
+ bought_for:"Куплен за", sold_for:"Продан за", profit:"Прибыль", rent_income:"Доход с аренды",
+ partners:"Партнёры", add_partner:"Добавить партнёра", partner_name:"Имя партнёра",
+ share:"Доля, %", invested:"Вложил", expenses:"Расходы", add_expense:"Добавить расход",
+ category:"Категория", amount:"Сумма", date:"Дата", total:"Итого",
+ cat_electricity:"⚡ Электричество", cat_gas:"🔥 Газ", cat_water:"💧 Вода",
+ cat_communal:"🏢 Коммуналка", cat_repair:"🔨 Ремонт", cat_other:"📦 Другое",
+ tenant:"Арендатор", tenant_name:"Имя арендатора", phone:"Телефон", passport:"Паспорт / ID",
+ rent_month:"Аренда в месяц", due_day:"День оплаты (1–28)", move_in_date:"Дата заселения",
+ move_in:"Заселить", move_out:"Выселить", move_out_q:"Выселить арендатора? Объект станет свободным, история сохранится.",
+ payments:"Оплаты", add_payment:"Принять оплату", for_month:"За месяц", note:"Комментарий",
+ paid:"Оплачено", not_paid:"Не оплачено", pay:"Оплата", history:"История арендаторов",
+ lived:"жил(а)", now_living:"живёт сейчас", total_paid:"всего оплатил(а)",
+ mark_sold:"Продано", sale_price:"Цена продажи", buyer:"Покупатель",
+ status:"Статус", delete:"Удалить", delete_q:"Удалить объект и всю его историю?",
+ no_tenants:"Активных арендаторов нет", due_day_short:"день оплаты",
+ reports:"Отчёты", in_sale:"В продаже", free_rent:"Свободны", rented_c:"Сданы", sold_c:"Продано",
+ debtors:"Должники", no_debtors:"Должников нет 🎉", overdue_days:"дн. просрочки",
+ due_today:"сегодня день оплаты!",
+ month_sum:"Итоги месяца", income:"Доход (аренда)", month_exp:"Расходы", month_sales:"Продажи",
+ profile:"Профиль", name:"Имя", language:"Язык", new_password:"Новый пароль (не обязательно)",
+ tg_chat:"Telegram chat ID (для напоминаний)", tg_hint:"Узнать свой ID: напишите @userinfobot в Telegram. Напоминания о должниках приходят каждый день в 9:00.",
+ tg_test:"Проверить уведомление", tg_off:"Telegram-бот не настроен (BOT_TOKEN в config.py)",
+ users:"Пользователи", add_user:"Добавить пользователя", role:"Роль", admin:"Админ", user:"Сотрудник",
+ logout:"Выйти", saved:"Сохранено ✅", added:"Добавлено ✅", deleted:"Удалено",
+ error:"Ошибка", wrong_login:"Неверный логин или пароль", required:"Заполните обязательные поля",
+ already_tenant:"В объекте уже есть арендатор",
+ months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"],
+ sum:"сум",
+},
+uz:{
+ username:"Login", password:"Parol", your_name:"Ismingiz", login:"Kirish",
+ setup:"Administrator yaratish", setup_hint:"Birinchi ishga tushirish: administrator akkauntini yarating",
+ tab_houses:"Uylar", tab_tenants:"Ijarachilar", tab_reports:"Hisobot", tab_settings:"Sozlamalar",
+ f_all:"Hammasi", f_sale:"Sotuv", f_rent_free:"Bo'sh", f_rented:"Ijarada", f_sold:"Sotilgan",
+ st_available:"Bo'sh", st_rented:"Ijarada", st_sold:"Sotilgan", st_reserved:"Band",
+ deal_sale:"Sotuv", deal_rent:"Ijara",
+ no_houses:"Hozircha uylar yo'q.\n«+» tugmasini bosing.",
+ add_house:"Yangi uy", edit_house:"Tahrirlash", address:"Manzil", district:"Tuman",
+ deal_type:"Turi", purchase_price:"Sotib olish narxi", currency:"Valyuta", owner:"Egasi",
+ owner_phone:"Egasining telefoni", notes:"Izohlar", save:"Saqlash", cancel:"Bekor qilish",
+ bought_for:"Sotib olingan", sold_for:"Sotilgan narx", profit:"Foyda", rent_income:"Ijara daromadi",
+ partners:"Sheriklar", add_partner:"Sherik qo'shish", partner_name:"Sherik ismi",
+ share:"Ulush, %", invested:"Qo'shgan", expenses:"Xarajatlar", add_expense:"Xarajat qo'shish",
+ category:"Turi", amount:"Summa", date:"Sana", total:"Jami",
+ cat_electricity:"⚡ Elektr", cat_gas:"🔥 Gaz", cat_water:"💧 Suv",
+ cat_communal:"🏢 Kommunal", cat_repair:"🔨 Ta'mir", cat_other:"📦 Boshqa",
+ tenant:"Ijarachi", tenant_name:"Ijarachi ismi", phone:"Telefon", passport:"Pasport / ID",
+ rent_month:"Oylik ijara haqi", due_day:"To'lov kuni (1–28)", move_in_date:"Kirish sanasi",
+ move_in:"Kiritish", move_out:"Chiqarish", move_out_q:"Ijarachini chiqarasizmi? Uy bo'sh bo'ladi, tarix saqlanadi.",
+ payments:"To'lovlar", add_payment:"To'lov qabul qilish", for_month:"Qaysi oy uchun", note:"Izoh",
+ paid:"To'langan", not_paid:"To'lanmagan", pay:"To'lov", history:"Ijarachilar tarixi",
+ lived:"yashagan", now_living:"hozir yashaydi", total_paid:"jami to'lagan",
+ mark_sold:"Sotildi", sale_price:"Sotish narxi", buyer:"Xaridor",
+ status:"Holat", delete:"O'chirish", delete_q:"Uy va uning tarixini o'chirasizmi?",
+ no_tenants:"Faol ijarachilar yo'q", due_day_short:"to'lov kuni",
+ reports:"Hisobotlar", in_sale:"Sotuvda", free_rent:"Bo'sh", rented_c:"Ijarada", sold_c:"Sotilgan",
+ debtors:"Qarzdorlar", no_debtors:"Qarzdorlar yo'q 🎉", overdue_days:"kun kechikdi",
+ due_today:"bugun to'lov kuni!",
+ month_sum:"Oy yakunlari", income:"Daromad (ijara)", month_exp:"Xarajatlar", month_sales:"Sotuvlar",
+ profile:"Profil", name:"Ism", language:"Til", new_password:"Yangi parol (ixtiyoriy)",
+ tg_chat:"Telegram chat ID (eslatmalar uchun)", tg_hint:"ID ni bilish: Telegramda @userinfobot ga yozing. Qarzdorlar haqida eslatma har kuni 9:00 da keladi.",
+ tg_test:"Bildirishnomani tekshirish", tg_off:"Telegram-bot sozlanmagan (config.py dagi BOT_TOKEN)",
+ users:"Foydalanuvchilar", add_user:"Foydalanuvchi qo'shish", role:"Rol", admin:"Admin", user:"Xodim",
+ logout:"Chiqish", saved:"Saqlandi ✅", added:"Qo'shildi ✅", deleted:"O'chirildi",
+ error:"Xatolik", wrong_login:"Login yoki parol noto'g'ri", required:"Majburiy maydonlarni to'ldiring",
+ already_tenant:"Uyda allaqachon ijarachi bor",
+ months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentyabr","Oktyabr","Noyabr","Dekabr"],
+ sum:"so'm",
+}};
+
+let LANG = localStorage.getItem("uyweb_lang") || "ru";
+const t = k => (I18N[LANG] && I18N[LANG][k]) || I18N.ru[k] || k;
+
+function applyI18n(){
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+  const ll = document.getElementById("langLabel");
+  if (ll) ll.textContent = LANG === "ru" ? "UZ" : "RU";
+}
+async function toggleLang(){
+  LANG = LANG === "ru" ? "uz" : "ru";
+  localStorage.setItem("uyweb_lang", LANG);
+  if (STATE.user) { try { await api("/api/profile","POST",{lang:LANG}); } catch(e){} }
+  applyI18n(); renderAuth(); if (STATE.user) setTab(STATE.tab);
+}
+
+/* ================= helpers ================= */
+const STATE = { user:null, tab:"houses", filter:"all", houses:[] };
+
+function fmt(a, cur){
+  if (a === null || a === undefined) return "—";
+  const n = a === Math.trunc(a) ? Math.trunc(a).toLocaleString("ru-RU")
+        : a.toLocaleString("ru-RU",{maximumFractionDigits:2});
+  return cur === "USD" ? "$" + n : n + " " + t("sum");
+}
+function fmtDate(iso){
+  if (!iso) return "—";
+  const [y,m,d] = iso.slice(0,10).split("-");
+  return `${d}.${m}.${y}`;
+}
+function esc(s){ return (s ?? "").toString().replace(/[&<>"']/g,
+  c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function moneyList(rows){ return rows && rows.length
+  ? rows.map(r => fmt(r.total, r.currency)).join(" + ") : "—"; }
+
+async function api(path, method="GET", body=null){
+  const opt = { method, headers:{} };
+  if (body){ opt.headers["Content-Type"]="application/json"; opt.body = JSON.stringify(body); }
+  const r = await fetch(path, opt);
+  let data = {};
+  try { data = await r.json(); } catch(e){}
+  if (!r.ok) throw new Error(data.error || t("error"));
+  return data;
+}
+
+let toastTimer;
+function toast(msg){
+  document.querySelectorAll(".toast").forEach(e=>e.remove());
+  const el = document.createElement("div");
+  el.className = "toast"; el.textContent = msg;
+  document.body.appendChild(el);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.remove(), 2400);
+}
+
+function closeModal(){ document.querySelectorAll(".modal-bg").forEach(e=>e.remove()); }
+function closeSheet(){ document.querySelectorAll(".sheet").forEach(e=>e.remove()); }
+function modal(html){
+  closeModal();
+  const bg = document.createElement("div");
+  bg.className = "modal-bg";
+  bg.innerHTML = `<div class="modal">${html}</div>`;
+  bg.addEventListener("click", e => { if (e.target === bg) closeModal(); });
+  document.getElementById("overlays").appendChild(bg);
+  return bg;
+}
+function sheet(title, html){
+  closeSheet();
+  const el = document.createElement("div");
+  el.className = "sheet";
+  el.innerHTML = `<div class="bar"><button onclick="closeSheet()">←</button>
+    <div class="title">${esc(title)}</div></div><div class="inner">${html}</div>`;
+  document.getElementById("overlays").appendChild(el);
+  return el;
+}
+function segInit(id, def){
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  wrap.querySelectorAll("button").forEach(b => {
+    if (b.dataset.v === def) b.classList.add("active");
+    b.onclick = () => { wrap.querySelectorAll("button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active"); };
+  });
+}
+function segVal(id){ const b = document.querySelector(`#${id} button.active`); return b ? b.dataset.v : null; }
+function currencySeg(id, def="UZS"){
+  return `<div class="seg" id="${id}">
+    <button type="button" data-v="UZS">UZS (${t("sum")})</button>
+    <button type="button" data-v="USD">USD ($)</button></div>`;
+}
+function monthOptions(){
+  const now = new Date(); let out = "";
+  for (let off = 1; off >= -10; off--){
+    const d = new Date(now.getFullYear(), now.getMonth() + off, 1);
+    const v = `${d.getFullYear()}-${d.getMonth()+1}`;
+    const sel = off === 0 ? "selected" : "";
+    out += `<option value="${v}" ${sel}>${t("months")[d.getMonth()]} ${d.getFullYear()}</option>`;
+  }
+  return out;
+}
+
+/* ================= auth ================= */
+let NEEDS_SETUP = false;
+function renderAuth(){
+  document.getElementById("authBtn").textContent = NEEDS_SETUP ? t("setup") : t("login");
+  const hint = document.getElementById("setupHint");
+  hint.classList.toggle("hide", !NEEDS_SETUP);
+  hint.textContent = t("setup_hint");
+  document.getElementById("authNameWrap").classList.toggle("hide", !NEEDS_SETUP);
+  applyI18n();
+}
+async function boot(){
+  applyI18n();
+  try {
+    const s = await api("/api/state");
+    NEEDS_SETUP = s.needs_setup;
+    if (s.user){
+      STATE.user = s.user;
+      if (s.user.lang && s.user.lang !== LANG){ LANG = s.user.lang; localStorage.setItem("uyweb_lang", LANG); }
+      showMain(); return;
+    }
+  } catch(e){}
+  document.getElementById("authView").classList.remove("hide");
+  renderAuth();
+}
+document.getElementById("authBtn").onclick = async () => {
+  const u = document.getElementById("authUser").value.trim();
+  const p = document.getElementById("authPass").value;
+  const err = document.getElementById("authErr");
+  err.classList.add("hide");
+  try {
+    if (NEEDS_SETUP)
+      await api("/api/setup","POST",{username:u,password:p,name:document.getElementById("authName").value.trim()||null});
+    else
+      await api("/api/login","POST",{username:u,password:p});
+    const s = await api("/api/state");
+    STATE.user = s.user;
+    if (s.user.lang && s.user.lang !== LANG){ LANG = s.user.lang; localStorage.setItem("uyweb_lang", LANG); }
+    document.getElementById("authView").classList.add("hide");
+    showMain();
+  } catch(e){
+    err.textContent = NEEDS_SETUP ? e.message : t("wrong_login");
+    err.classList.remove("hide");
+  }
+};
+function showMain(){
+  document.getElementById("authView").classList.add("hide");
+  document.getElementById("mainView").classList.remove("hide");
+  applyI18n();
+  setTab("houses");
+}
+
+/* ================= tabs ================= */
+function setTab(tab){
+  STATE.tab = tab;
+  closeSheet(); closeModal();
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab-"+tab).classList.add("active");
+  document.getElementById("fab").classList.toggle("hide", tab !== "houses");
+  ({houses:renderHouses, tenants:renderTenants, reports:renderReports, settings:renderSettings}[tab])();
+}
+
+/* ================= houses ================= */
+const ST_CHIP = {available:"green", rented:"blue", sold:"gray", reserved:"amber"};
+async function renderHouses(){
+  const c = document.getElementById("content");
+  const filters = ["all","sale","rent_free","rented","sold"];
+  c.innerHTML = `<div class="filters">` + filters.map(f =>
+    `<button class="${STATE.filter===f?'active':''}" onclick="STATE.filter='${f}';renderHouses()">${t("f_"+f)}</button>`
+  ).join("") + `</div><div id="houseList"><div class="empty">…</div></div>`;
+  let houses;
+  try { houses = await api("/api/houses?flt="+STATE.filter); } catch(e){ toast(e.message); return; }
+  STATE.houses = houses;
+  const list = document.getElementById("houseList");
+  if (!houses.length){ list.innerHTML = `<div class="empty">${esc(t("no_houses"))}</div>`; return; }
+  list.innerHTML = houses.map(h => {
+    let sub = `<span class="chip ${h.deal_type==='sale'?'amber':'blue'}">${t("deal_"+h.deal_type)}</span>
+      <span class="chip ${ST_CHIP[h.status]}">${t("st_"+h.status)}</span>`;
+    let extra = "";
+    if (h.tenant_name){
+      const pd = h.paid_this_month;
+      extra = `<div class="muted" style="margin-top:6px">👤 ${esc(h.tenant_name)} ·
+        ${fmt(h.rent_amount,h.rent_currency)}
+        <span class="chip ${pd?'green':'red'}" style="margin-left:4px">${pd?t("paid"):t("not_paid")}</span></div>`;
+    } else if (h.purchase_price){
+      extra = `<div class="muted" style="margin-top:6px">💰 ${t("bought_for")}: ${fmt(h.purchase_price,h.purchase_currency)}</div>`;
+    }
+    return `<div class="card tap" onclick="openHouse(${h.id})">
+      <div class="row"><div class="big">${esc(h.address)}</div></div>
+      ${h.district?`<div class="muted">🗺 ${esc(h.district)}</div>`:""}
+      <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">${sub}</div>
+      ${extra}</div>`;
+  }).join("");
+}
+
+async function openHouse(id){
+  let h;
+  try { h = await api("/api/houses/"+id); } catch(e){ toast(e.message); return; }
+  const s = sheet(h.address, houseDetailHtml(h));
+  s.dataset.houseId = id;
+}
+function refreshHouse(id){ closeModal(); openHouse(id); }
+
+function houseDetailHtml(h){
+  let html = `<div class="card">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <span class="chip ${h.deal_type==='sale'?'amber':'blue'}">${t("deal_"+h.deal_type)}</span>
+      <span class="chip ${ST_CHIP[h.status]}">${t("st_"+h.status)}</span>
+    </div>
+    ${h.district?`<div class="list-line">🗺 ${esc(h.district)}</div>`:""}
+    ${h.owner_name?`<div class="list-line">👤 ${t("owner")}: <b>${esc(h.owner_name)}</b>${h.owner_phone?` · <a href="tel:${esc(h.owner_phone)}">${esc(h.owner_phone)}</a>`:""}</div>`:""}
+    ${h.purchase_price?`<div class="list-line">💰 ${t("bought_for")}: <b>${fmt(h.purchase_price,h.purchase_currency)}</b></div>`:""}
+    ${h.rent_income.length?`<div class="list-line">📈 ${t("rent_income")}: <b>${moneyList(h.rent_income)}</b></div>`:""}
+    ${h.expenses_total.length?`<div class="list-line">🧾 ${t("expenses")}: <b>${moneyList(h.expenses_total)}</b></div>`:""}
+    ${h.status==='sold'&&h.sale_price?`<div class="list-line">✅ ${t("sold_for")}: <b>${fmt(h.sale_price,h.sale_currency)}</b>${h.sale_buyer?` (${esc(h.sale_buyer)})`:""} · ${fmtDate(h.sale_date)}</div>`:""}
+    ${h.profit!==undefined?`<div class="list-line">💹 ${t("profit")}: <b style="color:${h.profit>=0?'var(--green)':'var(--red)'}">${fmt(h.profit,h.profit_currency)}</b></div>`:""}
+    ${h.notes?`<div class="list-line muted">📝 ${esc(h.notes)}</div>`:""}
+  </div>`;
+
+  // tenant block
+  if (h.tenant){
+    const tn = h.tenant, pd = tn.paid_this_month;
+    html += `<div class="section-title">👥 ${t("tenant")}</div><div class="card">
+      <div class="row"><div class="big">${esc(tn.name)}</div>
+        <span class="chip ${pd?'green':'red'}">${pd?t("paid"):t("not_paid")}</span></div>
+      ${tn.phone?`<div class="list-line">📞 <a href="tel:${esc(tn.phone)}">${esc(tn.phone)}</a></div>`:""}
+      ${tn.passport?`<div class="list-line">🪪 ${esc(tn.passport)}</div>`:""}
+      <div class="list-line">💰 ${fmt(tn.rent_amount,tn.rent_currency)} / ${LANG==='uz'?'oy':'мес'} · ${t("due_day_short")}: ${tn.due_day}</div>
+      <div class="list-line">📅 ${fmtDate(tn.move_in)} →</div>
+      <div class="btn-row">
+        <button class="btn small" onclick="openPayForm(${tn.id},${h.id})">💵 ${t("add_payment")}</button>
+        <button class="btn small danger" onclick="moveOut(${tn.id},${h.id})">🚪 ${t("move_out")}</button>
+      </div></div>`;
+  } else if (h.deal_type === "rent" && h.status !== "sold"){
+    html += `<button class="btn" onclick="openMoveInForm(${h.id})">👥 ${t("move_in")}</button>`;
+  }
+
+  // actions
+  html += `<div class="btn-row">
+    <button class="btn small secondary" onclick="openExpenseForm(${h.id})">🧾 ${t("add_expense")}</button>
+    <button class="btn small secondary" onclick="openPartnerForm(${h.id})">🤝 ${t("add_partner")}</button>
+    ${h.status!=='sold'?`<button class="btn small secondary" onclick="openSoldForm(${h.id})">✅ ${t("mark_sold")}</button>`:""}
+    <button class="btn small secondary" onclick="openHouseForm(${h.id})">✏️ ${t("edit_house")}</button>
+    <button class="btn small danger" onclick="delHouse(${h.id})">🗑 ${t("delete")}</button>
+  </div>`;
+
+  // partners
+  if (h.partners.length){
+    html += `<div class="section-title">🤝 ${t("partners")}</div><div class="card">` +
+      h.partners.map(p => `<div class="list-line row"><div>👤 <b>${esc(p.name)}</b>
+        ${p.share!=null?` — ${p.share}%`:""}
+        ${p.invested?`<div class="muted">${t("invested")}: ${fmt(p.invested,p.invested_currency)}</div>`:""}</div>
+        <button class="btn small danger" onclick="delPartner(${p.id},${h.id})">✕</button></div>`).join("") + `</div>`;
+  }
+
+  // payments
+  if (h.payments.length){
+    html += `<div class="section-title">💵 ${t("payments")}</div><div class="card">` +
+      h.payments.map(p => `<div class="list-line row"><div>${fmtDate(p.paid_at)} — <b>${fmt(p.amount,p.currency)}</b>
+        <div class="muted">${esc(p.tenant_name)} · ${t("months")[p.period_month-1]} ${p.period_year}${p.note?` · ${esc(p.note)}`:""}</div></div>
+        <button class="btn small danger" onclick="delPayment(${p.id},${h.id})">✕</button></div>`).join("") + `</div>`;
+  }
+
+  // expenses
+  if (h.expenses.length){
+    html += `<div class="section-title">🧾 ${t("expenses")}</div><div class="card">` +
+      h.expenses.map(e => `<div class="list-line row"><div>${fmtDate(e.spent_at)} — ${t("cat_"+e.category)}: <b>${fmt(e.amount,e.currency)}</b>
+        ${e.note?`<div class="muted">${esc(e.note)}</div>`:""}</div>
+        <button class="btn small danger" onclick="delExpense(${e.id},${h.id})">✕</button></div>`).join("") +
+      `<div class="list-line"><b>${t("total")}: ${moneyList(h.expenses_total)}</b></div></div>`;
+  }
+
+  // tenant history
+  if (h.history.length){
+    html += `<div class="section-title">📜 ${t("history")}</div><div class="card">` +
+      h.history.map(x => `<div class="list-line">👤 <b>${esc(x.name)}</b>${x.phone?` · ${esc(x.phone)}`:""}
+        <div class="muted">${fmtDate(x.move_in)} → ${x.move_out?fmtDate(x.move_out):`<i>${t("now_living")}</i>`}
+        · ${t("total_paid")}: ${fmt(x.total_paid,x.rent_currency)}</div>
+        ${x.passport?`<div class="muted">🪪 ${esc(x.passport)}</div>`:""}</div>`).join("") + `</div>`;
+  }
+  return html;
+}
+
+/* ---------- house form (add/edit) ---------- */
+function openHouseForm(id){
+  const h = id ? null : {};
+  const edit = !!id;
+  const src = edit ? STATE._editHouse : null;
+  const build = (hh) => {
+    modal(`<h3>${edit?t("edit_house"):t("add_house")}</h3>
+      <label>${t("address")} *</label><input id="hf_address" value="${esc(hh.address||"")}">
+      <label>${t("district")}</label><input id="hf_district" value="${esc(hh.district||"")}">
+      <label>${t("deal_type")}</label>
+      <div class="seg" id="hf_deal">
+        <button type="button" data-v="rent">🔑 ${t("deal_rent")}</button>
+        <button type="button" data-v="sale">🏷 ${t("deal_sale")}</button></div>
+      <label>${t("purchase_price")}</label><input id="hf_price" inputmode="decimal" value="${hh.purchase_price??""}">
+      <label>${t("currency")}</label>${currencySeg("hf_cur")}
+      <label>${t("owner")}</label><input id="hf_owner" value="${esc(hh.owner_name||"")}">
+      <label>${t("owner_phone")}</label><input id="hf_ophone" inputmode="tel" value="${esc(hh.owner_phone||"")}">
+      <label>${t("notes")}</label><textarea id="hf_notes" rows="2">${esc(hh.notes||"")}</textarea>
+      <button class="btn" onclick="saveHouse(${id||"null"})">${t("save")}</button>
+      <button class="btn secondary" onclick="closeModal()">${t("cancel")}</button>`);
+    segInit("hf_deal", hh.deal_type || "rent");
+    segInit("hf_cur", hh.purchase_currency || "USD");
+  };
+  if (edit){
+    api("/api/houses/"+id).then(hh => { STATE._editHouse = hh; build(hh); }).catch(e=>toast(e.message));
+  } else build({});
+}
+async function saveHouse(id){
+  const address = document.getElementById("hf_address").value.trim();
+  if (!address){ toast(t("required")); return; }
+  const priceRaw = document.getElementById("hf_price").value.trim().replace(/\s/g,"").replace(",",".");
+  const price = priceRaw ? parseFloat(priceRaw) : null;
+  if (priceRaw && isNaN(price)){ toast(t("required")); return; }
+  const body = {
+    address, district: document.getElementById("hf_district").value.trim() || null,
+    deal_type: segVal("hf_deal"),
+    purchase_price: price, purchase_currency: price != null ? segVal("hf_cur") : null,
+    owner_name: document.getElementById("hf_owner").value.trim() || null,
+    owner_phone: document.getElementById("hf_ophone").value.trim() || null,
+    notes: document.getElementById("hf_notes").value.trim() || null,
+  };
+  try {
+    const h = id ? await api("/api/houses/"+id,"PATCH",body) : await api("/api/houses","POST",body);
+    toast(t("saved")); closeModal();
+    if (STATE.tab === "houses") renderHouses();
+    openHouse(h.id);
+  } catch(e){ toast(e.message); }
+}
+async function delHouse(id){
+  if (!confirm(t("delete_q"))) return;
+  try { await api("/api/houses/"+id,"DELETE"); toast(t("deleted")); closeSheet(); renderHouses(); }
+  catch(e){ toast(e.message); }
+}
+
+/* ---------- partner ---------- */
+function openPartnerForm(hid){
+  modal(`<h3>${t("add_partner")}</h3>
+    <label>${t("partner_name")} *</label><input id="pf_name">
+    <label>${t("share")}</label><input id="pf_share" inputmode="decimal">
+    <label>${t("invested")}</label><input id="pf_inv" inputmode="decimal">
+    <label>${t("currency")}</label>${currencySeg("pf_cur")}
+    <button class="btn" onclick="savePartner(${hid})">${t("save")}</button>
+    <button class="btn secondary" onclick="closeModal()">${t("cancel")}</button>`);
+  segInit("pf_cur","USD");
+}
+async function savePartner(hid){
+  const name = document.getElementById("pf_name").value.trim();
+  if (!name){ toast(t("required")); return; }
+  const share = parseFloat(document.getElementById("pf_share").value.replace(",","."));
+  const inv = parseFloat(document.getElementById("pf_inv").value.replace(/\s/g,"").replace(",","."));
+  try {
+    await api(`/api/houses/${hid}/partners`,"POST",{ name,
+      share: isNaN(share)?null:share, invested: isNaN(inv)?null:inv,
+      invested_currency: segVal("pf_cur") });
+    toast(t("added")); refreshHouse(hid);
+  } catch(e){ toast(e.message); }
+}
+async function delPartner(pid, hid){
+  try { await api("/api/partners/"+pid,"DELETE"); refreshHouse(hid); } catch(e){ toast(e.message); }
+}
+
+/* ---------- move in / out ---------- */
+function openMoveInForm(hid){
+  const today = new Date().toISOString().slice(0,10);
+  modal(`<h3>${t("move_in")}</h3>
+    <label>${t("tenant_name")} *</label><input id="mi_name">
+    <label>${t("phone")}</label><input id="mi_phone" inputmode="tel">
+    <label>${t("passport")}</label><input id="mi_pass">
+    <label>${t("rent_month")} *</label><input id="mi_rent" inputmode="decimal">
+    <label>${t("currency")}</label>${currencySeg("mi_cur")}
+    <label>${t("due_day")} *</label><input id="mi_due" inputmode="numeric" value="5">
+    <label>${t("move_in_date")}</label><input id="mi_date" type="date" value="${today}">
+    <label>${t("notes")}</label><textarea id="mi_notes" rows="2"></textarea>
+    <button class="btn" onclick="saveMoveIn(${hid})">${t("save")}</button>
+    <button class="btn secondary" onclick="closeModal()">${t("cancel")}</button>`);
+  segInit("mi_cur","UZS");
+}
+async function saveMoveIn(hid){
+  const name = document.getElementById("mi_name").value.trim();
+  const rent = parseFloat(document.getElementById("mi_rent").value.replace(/\s/g,"").replace(",","."));
+  const due = parseInt(document.getElementById("mi_due").value);
+  if (!name || isNaN(rent) || isNaN(due) || due < 1 || due > 28){ toast(t("required")); return; }
+  try {
+    await api(`/api/houses/${hid}/tenants`,"POST",{
+      name, phone: document.getElementById("mi_phone").value.trim() || null,
+      passport: document.getElementById("mi_pass").value.trim() || null,
+      rent_amount: rent, rent_currency: segVal("mi_cur"), due_day: due,
+      move_in: document.getElementById("mi_date").value || null,
+      notes: document.getElementById("mi_notes").value.trim() || null });
+    toast(t("saved")); refreshHouse(hid);
+  } catch(e){ toast(e.message); }
+}
+async function moveOut(tid, hid){
+  if (!confirm(t("move_out_q"))) return;
+  try { await api(`/api/tenants/${tid}/moveout`,"POST"); toast(t("saved")); refreshHouse(hid); }
+  catch(e){ toast(e.message); }
+}
+
+/* ---------- payment ---------- */
+async function openPayForm(tid, hid){
+  let tn = null;
+  try {
+    const tenants = await api("/api/tenants");
+    tn = tenants.find(x => x.id === tid);
+  } catch(e){}
+  modal(`<h3>${t("add_payment")}${tn?` — ${esc(tn.name)}`:""}</h3>
+    <label>${t("amount")} *</label><input id="pay_amount" inputmode="decimal" value="${tn?tn.rent_amount:""}">
+    <label>${t("currency")}</label>${currencySeg("pay_cur")}
+    <label>${t("for_month")}</label><select id="pay_period">${monthOptions()}</select>
+    <label>${t("note")}</label><input id="pay_note">
+    <button class="btn" onclick="savePayment(${tid},${hid||"null"})">${t("save")}</button>
+    <button class="btn secondary" onclick="closeModal()">${t("cancel")}</button>`);
+  segInit("pay_cur", tn ? tn.rent_currency : "UZS");
+}
+async function savePayment(tid, hid){
+  const amount = parseFloat(document.getElementById("pay_amount").value.replace(/\s/g,"").replace(",","."));
+  if (isNaN(amount)){ toast(t("required")); return; }
+  const [y,m] = document.getElementById("pay_period").value.split("-").map(Number);
+  try {
+    await api("/api/payments","POST",{ tenant_id: tid, amount, currency: segVal("pay_cur"),
+      period_year: y, period_month: m,
+      note: document.getElementById("pay_note").value.trim() || null });
+    toast(t("saved"));
+    if (hid) refreshHouse(hid); else { closeModal(); renderTenants(); }
+  } catch(e){ toast(e.message); }
+}
+async function delPayment(pid, hid){
+  try { await api("/api/payments/"+pid,"DELETE"); refreshHouse(hid); } catch(e){ toast(e.message); }
+}
+
+/* ---------- expense ---------- */
+function openExpenseForm(hid){
+  const cats = ["electricity","gas","water","communal","repair","other"];
+  modal(`<h3>${t("add_expense")}</h3>
+    <label>${t("category")}</label>
+    <select id="ex_cat">${cats.map(c=>`<option value="${c}">${t("cat_"+c)}</option>`).join("")}</select>
+    <label>${t("amount")} *</label><input id="ex_amount" inputmode="decimal">
+    <label>${t("currency")}</label>${currencySeg("ex_cur")}
+    <label>${t("note")}</label><input id="ex_note">
+    <button class="btn" onclick="saveExpense(${hid})">${t("save")}</button>
+    <button class="btn secondary" onclick="closeModal()">${t("cancel")}</button>`);
+  segInit("ex_cur","UZS");
+}
+async function saveExpense(hid){
+  const amount = parseFloat(document.getElementById("ex_amount").value.replace(/\s/g,"").replace(",","."));
+  if (isNaN(amount)){ toast(t("required")); return; }
+  try {
+    await api("/api/expenses","POST",{ house_id: hid,
+      category: document.getElementById("ex_cat").value, amount, currency: segVal("ex_cur"),
+      note: document.getElementById("ex_note").value.trim() || null });
+    toast(t("added")); refreshHouse(hid);
+  } catch(e){ toast(e.message); }
+}
+async function delExpense(eid, hid){
+  try { await api("/api/expenses/"+eid,"DELETE"); refreshHouse(hid); } catch(e){ toast(e.message); }
+}
+
+/* ---------- sold ---------- */
+function openSoldForm(hid){
+  modal(`<h3>✅ ${t("mark_sold")}</h3>
+    <label>${t("sale_price")} *</label><input id="so_price" inputmode="decimal">
+    <label>${t("currency")}</label>${currencySeg("so_cur")}
+    <label>${t("buyer")}</label><input id="so_buyer">
+    <button class="btn" onclick="saveSold(${hid})">${t("save")}</button>
+    <button class="btn secondary" onclick="closeModal()">${t("cancel")}</button>`);
+  segInit("so_cur","USD");
+}
+async function saveSold(hid){
+  const price = parseFloat(document.getElementById("so_price").value.replace(/\s/g,"").replace(",","."));
+  if (isNaN(price)){ toast(t("required")); return; }
+  try {
+    await api(`/api/houses/${hid}/sold`,"POST",{ price, currency: segVal("so_cur"),
+      buyer: document.getElementById("so_buyer").value.trim() || null });
+    toast(t("saved")); refreshHouse(hid);
+  } catch(e){ toast(e.message); }
+}
+
+/* ================= tenants tab ================= */
+async function renderTenants(){
+  const c = document.getElementById("content");
+  c.innerHTML = `<div class="empty">…</div>`;
+  let tenants;
+  try { tenants = await api("/api/tenants"); } catch(e){ toast(e.message); return; }
+  if (!tenants.length){ c.innerHTML = `<div class="empty">${t("no_tenants")}</div>`; return; }
+  c.innerHTML = tenants.map(tn => `<div class="card">
+    <div class="row"><div class="big">${esc(tn.name)}</div>
+      <span class="chip ${tn.paid_this_month?'green':'red'}">${tn.paid_this_month?t("paid"):t("not_paid")}</span></div>
+    <div class="muted" style="margin-top:4px">🏠 ${esc(tn.address)}</div>
+    ${tn.phone?`<div class="muted">📞 <a href="tel:${esc(tn.phone)}">${esc(tn.phone)}</a></div>`:""}
+    <div class="muted">💰 ${fmt(tn.rent_amount,tn.rent_currency)} · ${t("due_day_short")}: ${tn.due_day}</div>
+    <div class="btn-row">
+      <button class="btn small" onclick="openPayForm(${tn.id},null)">💵 ${t("add_payment")}</button>
+      <button class="btn small secondary" onclick="openHouse(${tn.house_id})">🏠 ${t("tab_houses")}</button>
+    </div></div>`).join("");
+}
+
+/* ================= reports ================= */
+async function renderReports(){
+  const c = document.getElementById("content");
+  c.innerHTML = `<div class="empty">…</div>`;
+  let r;
+  try { r = await api("/api/reports"); } catch(e){ toast(e.message); return; }
+  const cn = r.counts;
+  let html = `<div class="stat-grid">
+    <div class="stat"><div class="n">${cn.sale}</div><div class="l">🏷 ${t("in_sale")}</div></div>
+    <div class="stat"><div class="n">${cn.rent_free}</div><div class="l">🔑 ${t("free_rent")}</div></div>
+    <div class="stat"><div class="n">${cn.rented}</div><div class="l">👥 ${t("rented_c")}</div></div>
+    <div class="stat"><div class="n">${cn.sold}</div><div class="l">✅ ${t("sold_c")}</div></div>
+  </div>`;
+
+  html += `<div class="section-title">⚠️ ${t("debtors")}</div>`;
+  if (!r.debtors.length) html += `<div class="card">${t("no_debtors")}</div>`;
+  else html += r.debtors.map(d => `<div class="card">
+    <div class="row"><div class="big">${esc(d.name)}</div>
+      <span class="chip red">${d.overdue_days>0?`${d.overdue_days} ${t("overdue_days")}`:t("due_today")}</span></div>
+    <div class="muted">🏠 ${esc(d.address)}</div>
+    ${d.phone?`<div class="muted">📞 <a href="tel:${esc(d.phone)}">${esc(d.phone)}</a></div>`:""}
+    <div class="muted">💰 ${fmt(d.rent_amount,d.rent_currency)} · ${t("due_day_short")}: ${d.due_day}</div>
+    <div class="btn-row"><button class="btn small" onclick="openPayForm(${d.id},null)">💵 ${t("add_payment")}</button></div>
+  </div>`).join("");
+
+  const m = r.month;
+  html += `<div class="section-title">📅 ${t("month_sum")} — ${t("months")[m.month-1]} ${m.year}</div>
+    <div class="card">
+      <div class="list-line row"><span>📈 ${t("income")}</span><b>${moneyList(m.income)}</b></div>
+      <div class="list-line row"><span>🧾 ${t("month_exp")}</span><b>${moneyList(m.expense)}</b></div>
+      <div class="list-line row"><span>🏷 ${t("month_sales")}</span><b>${moneyList(m.sales)}</b></div>
+    </div>`;
+  c.innerHTML = html;
+}
+
+/* ================= settings ================= */
+async function renderSettings(){
+  const c = document.getElementById("content");
+  const u = STATE.user;
+  let html = `<div class="section-title">👤 ${t("profile")}</div><div class="card">
+    <label>${t("name")}</label><input id="st_name" value="${esc(u.name||"")}">
+    <label>${t("language")}</label>
+    <div class="seg" id="st_lang">
+      <button type="button" data-v="ru">Русский</button>
+      <button type="button" data-v="uz">O'zbekcha</button></div>
+    <label>${t("new_password")}</label><input id="st_pass" type="password" autocomplete="new-password">
+    <label>${t("tg_chat")}</label><input id="st_tg" inputmode="numeric" value="${esc(u.tg_chat_id||"")}">
+    <div class="muted" style="margin-top:6px">${u.tg_enabled ? t("tg_hint") : "⚠️ " + t("tg_off")}</div>
+    <button class="btn" onclick="saveProfile()">${t("save")}</button>
+    ${u.tg_enabled?`<button class="btn secondary" onclick="testTg()">🔔 ${t("tg_test")}</button>`:""}
+  </div>`;
+
+  if (u.role === "admin"){
+    html += `<div class="section-title">👥 ${t("users")}</div><div class="card" id="usersCard">…</div>
+    <div class="card">
+      <label>${t("username")}</label><input id="nu_user" autocomplete="off">
+      <label>${t("password")}</label><input id="nu_pass" autocomplete="new-password">
+      <label>${t("name")}</label><input id="nu_name">
+      <label>${t("role")}</label>
+      <div class="seg" id="nu_role">
+        <button type="button" data-v="user">${t("user")}</button>
+        <button type="button" data-v="admin">${t("admin")}</button></div>
+      <button class="btn" onclick="createUser()">➕ ${t("add_user")}</button>
+    </div>`;
+  }
+  html += `<button class="btn danger" onclick="logout()">🚪 ${t("logout")}</button>`;
+  c.innerHTML = html;
+  segInit("st_lang", LANG);
+  if (u.role === "admin"){ segInit("nu_role","user"); loadUsers(); }
+}
+async function loadUsers(){
+  try {
+    const users = await api("/api/users");
+    document.getElementById("usersCard").innerHTML = users.map(x =>
+      `<div class="list-line row"><div><b>${esc(x.name||x.username)}</b>
+        <div class="muted">@${esc(x.username)} · ${t(x.role)}</div></div>
+        ${x.id!==STATE.user.id?`<button class="btn small danger" onclick="delUser(${x.id})">✕</button>`:""}</div>`).join("");
+  } catch(e){}
+}
+async function saveProfile(){
+  const newLang = segVal("st_lang");
+  try {
+    await api("/api/profile","POST",{
+      name: document.getElementById("st_name").value.trim() || null,
+      lang: newLang,
+      tg_chat_id: document.getElementById("st_tg").value.trim(),
+      password: document.getElementById("st_pass").value || null });
+    STATE.user.name = document.getElementById("st_name").value.trim();
+    STATE.user.tg_chat_id = document.getElementById("st_tg").value.trim();
+    if (newLang !== LANG){ LANG = newLang; localStorage.setItem("uyweb_lang", LANG); applyI18n(); }
+    toast(t("saved")); renderSettings();
+  } catch(e){ toast(e.message); }
+}
+async function testTg(){
+  try { await api("/api/test-telegram","POST"); toast("✅"); }
+  catch(e){ toast(e.message); }
+}
+async function createUser(){
+  try {
+    await api("/api/users","POST",{
+      username: document.getElementById("nu_user").value.trim(),
+      password: document.getElementById("nu_pass").value,
+      name: document.getElementById("nu_name").value.trim() || null,
+      role: segVal("nu_role") });
+    toast(t("added")); renderSettings();
+  } catch(e){ toast(e.message); }
+}
+async function delUser(uid){
+  if (!confirm("OK?")) return;
+  try { await api("/api/users/"+uid,"DELETE"); loadUsers(); } catch(e){ toast(e.message); }
+}
+async function logout(){
+  try { await api("/api/logout","POST"); } catch(e){}
+  location.reload();
+}
+
+boot();
+</script>
+</body>
+</html>
