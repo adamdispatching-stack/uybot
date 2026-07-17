@@ -3,129 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0e13">
 <title>UyWeb</title>
 <style>
 :root{
-  --bg:#f4f5f7; --card:#ffffff; --text:#1a1d21; --muted:#6b7280;
-  --brand:#2563eb; --brand-dark:#1d4ed8; --green:#059669; --red:#dc2626;
-  --amber:#d97706; --blue:#2563eb; --border:#e5e7eb; --radius:14px;
+  color-scheme:dark;
+  --bg:#0c0e13; --card:#151922; --card2:#1b202c; --chart:#1a1d24;
+  --border:rgba(255,255,255,.07); --border2:rgba(255,255,255,.12);
+  --text:#f2f4f8; --sec:#9aa3b2; --muted:#79808f;
+  --gold:#d4af37; --gold-2:#e8c964; --gold-ink:#1a1408;
+  --emerald:#34d399; --red:#f87171; --amber:#fbbf24;
+  --blue:#3987e5; --orange:#d95926; --neg:#e66767; --gray-seg:#3a4150;
+  --grid:#2c2c2a; --radius:16px;
 }
-*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   background:var(--bg);color:var(--text);font-size:16px;
-  padding-bottom:calc(70px + env(safe-area-inset-bottom))}
+  padding-bottom:calc(74px + env(safe-area-inset-bottom))}
 h1,h2,h3{margin:0}
 button{font-family:inherit;cursor:pointer}
-input,select,textarea{font-family:inherit;font-size:16px;width:100%;padding:12px;
-  border:1.5px solid var(--border);border-radius:10px;background:#fff;color:var(--text);outline:none}
-input:focus,select:focus,textarea:focus{border-color:var(--brand)}
-label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 5px}
+input,select,textarea{font-family:inherit;font-size:16px;width:100%;padding:12px 13px;
+  border:1.5px solid var(--border2);border-radius:11px;background:var(--card2);
+  color:var(--text);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+input::placeholder{color:var(--muted)}
+label{display:block;font-size:12.5px;font-weight:600;color:var(--sec);margin:13px 0 5px;
+  text-transform:uppercase;letter-spacing:.5px}
+a{color:var(--gold-2)}
 .hide{display:none!important}
 
-/* header */
-header{position:sticky;top:0;z-index:20;background:var(--brand);color:#fff;
-  padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;
-  justify-content:space-between;align-items:center}
-header .title{font-size:18px;font-weight:700}
-.lang-btn{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:20px;
-  padding:6px 14px;font-size:14px;font-weight:600}
+header{position:sticky;top:0;z-index:20;
+  background:linear-gradient(180deg,#12151d 0%,#0e1118 100%);
+  border-bottom:1px solid var(--border);
+  padding:calc(13px + env(safe-area-inset-top)) 18px 13px;
+  display:flex;justify-content:space-between;align-items:center}
+header .title{font-size:19px;font-weight:800;letter-spacing:.3px}
+header .title .accent{color:var(--gold)}
+.lang-btn{background:rgba(212,175,55,.14);border:1px solid rgba(212,175,55,.35);
+  color:var(--gold-2);border-radius:20px;padding:6px 14px;font-size:13.5px;font-weight:700}
 
-/* bottom nav */
-nav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:#fff;
-  border-top:1px solid var(--border);display:flex;
-  padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1;background:none;border:none;padding:8px 0 6px;font-size:11px;
-  color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
-nav button .ico{font-size:22px}
-nav button.active{color:var(--brand);font-weight:700}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:#12151d;
+  border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:none;padding:9px 0 7px;font-size:10.5px;
+  color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-weight:600;letter-spacing:.2px}
+nav button .ico{font-size:21px;filter:grayscale(1) opacity(.55)}
+nav button.active{color:var(--gold-2)}
+nav button.active .ico{filter:none}
 
-/* content */
-main{padding:14px 14px 20px;max-width:640px;margin:0 auto}
-.card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;
-  box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.card.tap{cursor:pointer}
-.card.tap:active{transform:scale(.99)}
+main{padding:16px 14px 20px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:15px;margin-bottom:11px}
+.card.tap:active{transform:scale(.99);border-color:var(--border2)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.muted{color:var(--muted);font-size:13px}
-.big{font-size:18px;font-weight:700}
-.chip{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
-.chip.green{background:#d1fae5;color:#065f46}
-.chip.blue{background:#dbeafe;color:#1e40af}
-.chip.red{background:#fee2e2;color:#991b1b}
-.chip.amber{background:#fef3c7;color:#92400e}
-.chip.gray{background:#e5e7eb;color:#374151}
+.muted{color:var(--sec);font-size:13.5px}
+.big{font-size:17.5px;font-weight:700;line-height:1.3}
+.chip{display:inline-block;font-size:11.5px;font-weight:700;padding:3.5px 10px;
+  border-radius:20px;letter-spacing:.2px}
+.chip.green{background:rgba(52,211,153,.14);color:var(--emerald)}
+.chip.blue{background:rgba(57,135,229,.16);color:#7ab2f2}
+.chip.red{background:rgba(248,113,113,.14);color:var(--red)}
+.chip.amber{background:rgba(251,191,36,.13);color:var(--amber)}
+.chip.gray{background:rgba(255,255,255,.08);color:var(--sec)}
+.chip.gold{background:rgba(212,175,55,.15);color:var(--gold-2)}
 
-/* filters */
-.filters{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;-webkit-overflow-scrolling:touch}
-.filters button{white-space:nowrap;border:1.5px solid var(--border);background:#fff;
-  border-radius:20px;padding:7px 14px;font-size:14px;font-weight:600;color:var(--muted)}
-.filters button.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.toolbar{display:flex;gap:8px;margin-bottom:10px}
+.toolbar input{flex:1}
+.toolbar select{width:auto;min-width:118px}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filters button{white-space:nowrap;border:1px solid var(--border2);background:var(--card);
+  border-radius:20px;padding:7.5px 15px;font-size:13.5px;font-weight:600;color:var(--sec)}
+.filters button.active{background:var(--gold);border-color:var(--gold);color:var(--gold-ink)}
 
-/* buttons */
-.btn{display:block;width:100%;background:var(--brand);color:#fff;border:none;
-  border-radius:12px;padding:14px;font-size:16px;font-weight:700;margin-top:16px}
-.btn:active{background:var(--brand-dark)}
-.btn.secondary{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
-.btn.danger{background:#fff;color:var(--red);border:1.5px solid var(--red)}
-.btn.small{width:auto;display:inline-block;padding:9px 16px;font-size:14px;margin-top:0}
-.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.btn-row .btn{margin-top:0;flex:1;min-width:130px}
+.btn{display:block;width:100%;background:var(--gold);color:var(--gold-ink);border:none;
+  border-radius:12px;padding:14px;font-size:15.5px;font-weight:800;margin-top:16px;
+  letter-spacing:.2px}
+.btn:active{background:var(--gold-2)}
+.btn.secondary{background:transparent;color:var(--gold-2);border:1.5px solid rgba(212,175,55,.5)}
+.btn.danger{background:transparent;color:var(--red);border:1.5px solid rgba(248,113,113,.45)}
+.btn.small{width:auto;display:inline-block;padding:9px 15px;font-size:13.5px;margin-top:0}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.btn-row .btn{margin-top:0;flex:1;min-width:128px}
 
-/* FAB */
-.fab{position:fixed;right:18px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:19;
-  width:58px;height:58px;border-radius:50%;background:var(--brand);color:#fff;border:none;
-  font-size:30px;box-shadow:0 4px 14px rgba(37,99,235,.45);line-height:1}
+.fab{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:19;
+  width:58px;height:58px;border-radius:50%;background:var(--gold);color:var(--gold-ink);
+  border:none;font-size:30px;box-shadow:0 6px 20px rgba(212,175,55,.35);line-height:1}
 
-/* overlay sheet */
 .sheet{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;
-  padding-bottom:40px;animation:slideup .18s ease-out}
-@keyframes slideup{from{transform:translateY(30px);opacity:.5}to{transform:none;opacity:1}}
-.sheet .bar{position:sticky;top:0;z-index:5;background:var(--brand);color:#fff;
+  padding-bottom:44px;animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(28px);opacity:.5}to{transform:none;opacity:1}}
+.sheet .bar{position:sticky;top:0;z-index:5;background:#12151d;border-bottom:1px solid var(--border);
   padding:calc(12px + env(safe-area-inset-top)) 14px 12px;display:flex;align-items:center;gap:10px}
-.sheet .bar button{background:none;border:none;color:#fff;font-size:24px;padding:0 4px}
-.sheet .bar .title{font-size:17px;font-weight:700;flex:1}
-.sheet .inner{padding:14px;max-width:640px;margin:0 auto}
+.sheet .bar button{background:none;border:none;color:var(--gold-2);font-size:24px;padding:0 4px}
+.sheet .bar .title{font-size:16.5px;font-weight:700;flex:1;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.sheet .inner{padding:15px 14px;max-width:640px;margin:0 auto}
 
-/* modal */
-.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.62);display:flex;
   align-items:flex-end;justify-content:center}
-.modal{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:640px;
-  max-height:88vh;overflow-y:auto;padding:18px 16px calc(24px + env(safe-area-inset-bottom));
-  animation:slideup .18s ease-out}
-.modal h3{font-size:17px;margin-bottom:4px}
+.modal{background:var(--card);border:1px solid var(--border2);border-bottom:none;
+  border-radius:20px 20px 0 0;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;
+  padding:20px 16px calc(26px + env(safe-area-inset-bottom));animation:up .18s ease-out}
+.modal h3{font-size:17px;margin-bottom:2px}
 
 .seg{display:flex;gap:8px}
-.seg button{flex:1;border:1.5px solid var(--border);background:#fff;border-radius:10px;
-  padding:11px;font-size:15px;font-weight:600;color:var(--muted)}
-.seg button.active{border-color:var(--brand);color:var(--brand);background:#eff6ff}
+.seg button{flex:1;border:1.5px solid var(--border2);background:var(--card2);border-radius:10px;
+  padding:11px;font-size:14.5px;font-weight:600;color:var(--sec)}
+.seg button.active{border-color:var(--gold);color:var(--gold-2);background:rgba(212,175,55,.1)}
 
-.list-line{padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.list-line{padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
 .list-line:last-child{border-bottom:none}
-.section-title{font-size:14px;font-weight:700;color:var(--muted);margin:18px 0 8px;
-  text-transform:uppercase;letter-spacing:.4px}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.stat{background:#fff;border-radius:var(--radius);padding:14px;
-  box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.stat .n{font-size:26px;font-weight:800}
-.stat .l{font-size:12.5px;color:var(--muted);font-weight:600}
-.empty{color:var(--muted);text-align:center;padding:34px 10px;font-size:15px}
+.section-title{font-size:12.5px;font-weight:800;color:var(--muted);margin:20px 0 9px;
+  text-transform:uppercase;letter-spacing:1px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 15px}
+.stat .n{font-size:27px;font-weight:800;line-height:1.15}
+.stat .l{font-size:12px;color:var(--sec);font-weight:600;margin-top:3px}
+.empty{color:var(--muted);text-align:center;padding:36px 10px;font-size:15px;white-space:pre-line}
 .toast{position:fixed;left:50%;transform:translateX(-50%);z-index:99;
-  bottom:calc(90px + env(safe-area-inset-bottom));background:#1a1d21;color:#fff;
-  padding:11px 20px;border-radius:24px;font-size:14.5px;font-weight:600;
-  box-shadow:0 4px 14px rgba(0,0,0,.3);max-width:88vw}
-.login-wrap{max-width:380px;margin:0 auto;padding:56px 22px}
-.login-wrap .logo{text-align:center;font-size:44px}
-.login-wrap h1{text-align:center;font-size:22px;margin:8px 0 26px}
-.err{color:var(--red);font-size:14px;margin-top:10px;text-align:center}
+  bottom:calc(92px + env(safe-area-inset-bottom));background:#f2f4f8;color:#12151d;
+  padding:11px 20px;border-radius:24px;font-size:14px;font-weight:700;
+  box-shadow:0 6px 18px rgba(0,0,0,.5);max-width:88vw}
+.login-wrap{max-width:390px;margin:0 auto;padding:64px 24px}
+.login-wrap .logo{text-align:center;font-size:46px}
+.login-wrap h1{text-align:center;font-size:24px;margin:10px 0 4px;font-weight:800}
+.login-wrap .sub{text-align:center;color:var(--muted);font-size:13.5px;margin-bottom:26px}
+.err{color:var(--red);font-size:14px;margin-top:12px;text-align:center}
+
+/* houses list */
+.hcard{display:flex;gap:12px;align-items:stretch}
+.hthumb{width:66px;min-width:66px;height:66px;border-radius:12px;object-fit:cover;
+  border:1px solid var(--border2)}
+.hthumb.ph{display:flex;align-items:center;justify-content:center;font-size:26px;
+  background:var(--card2)}
+
+/* gallery */
+.gallery{display:flex;gap:9px;overflow-x:auto;padding:2px 0;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.gallery::-webkit-scrollbar{display:none}
+.gallery img{width:96px;height:96px;min-width:96px;object-fit:cover;border-radius:12px;
+  border:1px solid var(--border2)}
+.gallery .addph{width:96px;height:96px;min-width:96px;border-radius:12px;
+  border:1.5px dashed rgba(212,175,55,.5);background:none;color:var(--gold-2);font-size:26px}
+.viewer{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.93);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px}
+.viewer img{max-width:100%;max-height:74vh;border-radius:12px}
+.viewer .vbtns{display:flex;gap:10px}
+
+/* charts */
+.viz-root{background:var(--chart);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 14px 10px;margin-bottom:11px}
+.viz-root .vtitle{font-size:13.5px;font-weight:700;margin-bottom:2px}
+.viz-root .vsub{font-size:12px;color:var(--muted);margin-bottom:10px}
+.legend{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}
+.legend .li{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sec);
+  font-weight:600}
+.legend .sw{width:10px;height:10px;border-radius:3px}
+.bar-hit{cursor:pointer}
+#tip{position:fixed;z-index:98;background:#232936;border:1px solid var(--border2);
+  border-radius:10px;padding:8px 12px;font-size:12.5px;pointer-events:none;
+  box-shadow:0 6px 18px rgba(0,0,0,.45);display:none;line-height:1.5}
+.nrow{display:flex;align-items:center;gap:10px;padding:6px 0}
+.nrow .nname{width:38%;min-width:38%;font-size:12.5px;color:var(--sec);overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.nrow .ntrack{flex:1;display:flex;align-items:center;gap:8px}
+.nrow .nbar{height:14px;border-radius:0 4px 4px 0;min-width:3px}
+.nrow .nval{font-size:12px;font-weight:700;white-space:nowrap}
 </style>
 </head>
 <body>
 
-<!-- ===== LOGIN / SETUP ===== -->
 <div id="authView" class="hide">
   <div class="login-wrap">
     <div class="logo">🏠</div>
-    <h1 id="authTitle">UyWeb</h1>
+    <h1>Uy<span style="color:var(--gold)">Web</span></h1>
+    <div class="sub">Tashkent Real Estate Manager</div>
     <div id="setupHint" class="muted hide" style="text-align:center;margin-bottom:14px"></div>
     <label data-i18n="username"></label>
     <input id="authUser" autocomplete="username">
@@ -137,16 +192,15 @@ main{padding:14px 14px 20px;max-width:640px;margin:0 auto}
     </div>
     <button class="btn" id="authBtn"></button>
     <div id="authErr" class="err hide"></div>
-    <div style="text-align:center;margin-top:22px">
-      <button class="lang-btn" style="background:#e5e7eb;color:#374151" onclick="toggleLang()">RU / UZ</button>
+    <div style="text-align:center;margin-top:24px">
+      <button class="lang-btn" onclick="toggleLang()">RU / UZ</button>
     </div>
   </div>
 </div>
 
-<!-- ===== MAIN ===== -->
 <div id="mainView" class="hide">
   <header>
-    <div class="title">🏠 UyWeb</div>
+    <div class="title">🏠 Uy<span class="accent">Web</span></div>
     <button class="lang-btn" onclick="toggleLang()"><span id="langLabel">UZ</span></button>
   </header>
   <main id="content"></main>
@@ -160,6 +214,7 @@ main{padding:14px 14px 20px;max-width:640px;margin:0 auto}
 </div>
 
 <div id="overlays"></div>
+<div id="tip"></div>
 
 <script>
 /* ================= i18n ================= */
@@ -167,81 +222,93 @@ const I18N = {
 ru:{
  username:"Логин", password:"Пароль", your_name:"Ваше имя", login:"Войти",
  setup:"Создать администратора", setup_hint:"Первый запуск: создайте аккаунт администратора",
- tab_houses:"Объекты", tab_tenants:"Арендаторы", tab_reports:"Отчёты", tab_settings:"Настройки",
+ tab_houses:"Объекты", tab_tenants:"Аренда", tab_reports:"Отчёты", tab_settings:"Ещё",
  f_all:"Все", f_sale:"Продажа", f_rent_free:"Свободные", f_rented:"Сданные", f_sold:"Проданные",
  st_available:"Свободен", st_rented:"Сдан", st_sold:"Продан", st_reserved:"Бронь",
  deal_sale:"Продажа", deal_rent:"Аренда",
- no_houses:"Пока нет объектов.\nНажмите «+», чтобы добавить.",
- add_house:"Новый объект", edit_house:"Редактировать", address:"Адрес", district:"Район",
+ search_ph:"Поиск: адрес, район, имя…",
+ sort_new:"Сначала новые", sort_price_desc:"Цена ↓", sort_price_asc:"Цена ↑",
+ no_houses:"Пока нет объектов.\nНажмите «+», чтобы добавить.", nothing_found:"Ничего не найдено",
+ add_house:"Новый объект", edit_house:"Изменить", address:"Адрес", district:"Район",
  deal_type:"Тип", purchase_price:"Цена покупки", currency:"Валюта", owner:"Владелец",
  owner_phone:"Телефон владельца", notes:"Заметки", save:"Сохранить", cancel:"Отмена",
  bought_for:"Куплен за", sold_for:"Продан за", profit:"Прибыль", rent_income:"Доход с аренды",
- partners:"Партнёры", add_partner:"Добавить партнёра", partner_name:"Имя партнёра",
- share:"Доля, %", invested:"Вложил", expenses:"Расходы", add_expense:"Добавить расход",
- category:"Категория", amount:"Сумма", date:"Дата", total:"Итого",
+ partners:"Партнёры", add_partner:"Партнёр", partner_name:"Имя партнёра",
+ share:"Доля, %", invested:"Вложил", expenses:"Расходы", add_expense:"Расход",
+ category:"Категория", amount:"Сумма", total:"Итого",
  cat_electricity:"⚡ Электричество", cat_gas:"🔥 Газ", cat_water:"💧 Вода",
  cat_communal:"🏢 Коммуналка", cat_repair:"🔨 Ремонт", cat_other:"📦 Другое",
  tenant:"Арендатор", tenant_name:"Имя арендатора", phone:"Телефон", passport:"Паспорт / ID",
  rent_month:"Аренда в месяц", due_day:"День оплаты (1–28)", move_in_date:"Дата заселения",
  move_in:"Заселить", move_out:"Выселить", move_out_q:"Выселить арендатора? Объект станет свободным, история сохранится.",
- payments:"Оплаты", add_payment:"Принять оплату", for_month:"За месяц", note:"Комментарий",
- paid:"Оплачено", not_paid:"Не оплачено", pay:"Оплата", history:"История арендаторов",
- lived:"жил(а)", now_living:"живёт сейчас", total_paid:"всего оплатил(а)",
+ payments:"Оплаты", add_payment:"Оплата", for_month:"За месяц", note:"Комментарий",
+ paid:"Оплачено", not_paid:"Не оплачено", history:"История арендаторов",
+ now_living:"живёт сейчас", total_paid:"всего оплатил(а)",
  mark_sold:"Продано", sale_price:"Цена продажи", buyer:"Покупатель",
- status:"Статус", delete:"Удалить", delete_q:"Удалить объект и всю его историю?",
+ delete:"Удалить", delete_q:"Удалить объект и всю его историю?",
  no_tenants:"Активных арендаторов нет", due_day_short:"день оплаты",
- reports:"Отчёты", in_sale:"В продаже", free_rent:"Свободны", rented_c:"Сданы", sold_c:"Продано",
+ photos:"Фото", delete_photo_q:"Удалить фото?", uploading:"Загрузка…",
+ in_sale:"В продаже", free_rent:"Свободны", rented_c:"Сданы", sold_c:"Продано",
  debtors:"Должники", no_debtors:"Должников нет 🎉", overdue_days:"дн. просрочки",
  due_today:"сегодня день оплаты!",
- month_sum:"Итоги месяца", income:"Доход (аренда)", month_exp:"Расходы", month_sales:"Продажи",
+ month_sum:"Итоги месяца", income:"Доход", month_exp:"Расходы", month_sales:"Продажи",
+ analytics:"Аналитика", chart_ie:"Доход и расходы, 12 мес", occupancy:"Заполняемость",
+ occupied:"Сдано", free_units:"Свободно", net_by_house:"Прибыль по объектам (всё время)",
+ no_data:"Пока нет данных — появятся после первых оплат",
  profile:"Профиль", name:"Имя", language:"Язык", new_password:"Новый пароль (не обязательно)",
  tg_chat:"Telegram chat ID (для напоминаний)", tg_hint:"Узнать свой ID: напишите @userinfobot в Telegram. Напоминания о должниках приходят каждый день в 9:00.",
- tg_test:"Проверить уведомление", tg_off:"Telegram-бот не настроен (BOT_TOKEN в config.py)",
+ tg_test:"Проверить уведомление", tg_off:"Telegram-бот не настроен (BOT_TOKEN)",
  users:"Пользователи", add_user:"Добавить пользователя", role:"Роль", admin:"Админ", user:"Сотрудник",
  logout:"Выйти", saved:"Сохранено ✅", added:"Добавлено ✅", deleted:"Удалено",
  error:"Ошибка", wrong_login:"Неверный логин или пароль", required:"Заполните обязательные поля",
- already_tenant:"В объекте уже есть арендатор",
  months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"],
+ months_s:["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"],
  sum:"сум",
 },
 uz:{
  username:"Login", password:"Parol", your_name:"Ismingiz", login:"Kirish",
  setup:"Administrator yaratish", setup_hint:"Birinchi ishga tushirish: administrator akkauntini yarating",
- tab_houses:"Uylar", tab_tenants:"Ijarachilar", tab_reports:"Hisobot", tab_settings:"Sozlamalar",
+ tab_houses:"Uylar", tab_tenants:"Ijara", tab_reports:"Hisobot", tab_settings:"Yana",
  f_all:"Hammasi", f_sale:"Sotuv", f_rent_free:"Bo'sh", f_rented:"Ijarada", f_sold:"Sotilgan",
  st_available:"Bo'sh", st_rented:"Ijarada", st_sold:"Sotilgan", st_reserved:"Band",
  deal_sale:"Sotuv", deal_rent:"Ijara",
- no_houses:"Hozircha uylar yo'q.\n«+» tugmasini bosing.",
+ search_ph:"Qidiruv: manzil, tuman, ism…",
+ sort_new:"Avval yangilari", sort_price_desc:"Narx ↓", sort_price_asc:"Narx ↑",
+ no_houses:"Hozircha uylar yo'q.\n«+» tugmasini bosing.", nothing_found:"Hech narsa topilmadi",
  add_house:"Yangi uy", edit_house:"Tahrirlash", address:"Manzil", district:"Tuman",
  deal_type:"Turi", purchase_price:"Sotib olish narxi", currency:"Valyuta", owner:"Egasi",
  owner_phone:"Egasining telefoni", notes:"Izohlar", save:"Saqlash", cancel:"Bekor qilish",
  bought_for:"Sotib olingan", sold_for:"Sotilgan narx", profit:"Foyda", rent_income:"Ijara daromadi",
- partners:"Sheriklar", add_partner:"Sherik qo'shish", partner_name:"Sherik ismi",
- share:"Ulush, %", invested:"Qo'shgan", expenses:"Xarajatlar", add_expense:"Xarajat qo'shish",
- category:"Turi", amount:"Summa", date:"Sana", total:"Jami",
+ partners:"Sheriklar", add_partner:"Sherik", partner_name:"Sherik ismi",
+ share:"Ulush, %", invested:"Qo'shgan", expenses:"Xarajatlar", add_expense:"Xarajat",
+ category:"Turi", amount:"Summa", total:"Jami",
  cat_electricity:"⚡ Elektr", cat_gas:"🔥 Gaz", cat_water:"💧 Suv",
  cat_communal:"🏢 Kommunal", cat_repair:"🔨 Ta'mir", cat_other:"📦 Boshqa",
  tenant:"Ijarachi", tenant_name:"Ijarachi ismi", phone:"Telefon", passport:"Pasport / ID",
  rent_month:"Oylik ijara haqi", due_day:"To'lov kuni (1–28)", move_in_date:"Kirish sanasi",
  move_in:"Kiritish", move_out:"Chiqarish", move_out_q:"Ijarachini chiqarasizmi? Uy bo'sh bo'ladi, tarix saqlanadi.",
- payments:"To'lovlar", add_payment:"To'lov qabul qilish", for_month:"Qaysi oy uchun", note:"Izoh",
- paid:"To'langan", not_paid:"To'lanmagan", pay:"To'lov", history:"Ijarachilar tarixi",
- lived:"yashagan", now_living:"hozir yashaydi", total_paid:"jami to'lagan",
+ payments:"To'lovlar", add_payment:"To'lov", for_month:"Qaysi oy uchun", note:"Izoh",
+ paid:"To'langan", not_paid:"To'lanmagan", history:"Ijarachilar tarixi",
+ now_living:"hozir yashaydi", total_paid:"jami to'lagan",
  mark_sold:"Sotildi", sale_price:"Sotish narxi", buyer:"Xaridor",
- status:"Holat", delete:"O'chirish", delete_q:"Uy va uning tarixini o'chirasizmi?",
+ delete:"O'chirish", delete_q:"Uy va uning tarixini o'chirasizmi?",
  no_tenants:"Faol ijarachilar yo'q", due_day_short:"to'lov kuni",
- reports:"Hisobotlar", in_sale:"Sotuvda", free_rent:"Bo'sh", rented_c:"Ijarada", sold_c:"Sotilgan",
+ photos:"Rasmlar", delete_photo_q:"Rasm o'chirilsinmi?", uploading:"Yuklanmoqda…",
+ in_sale:"Sotuvda", free_rent:"Bo'sh", rented_c:"Ijarada", sold_c:"Sotilgan",
  debtors:"Qarzdorlar", no_debtors:"Qarzdorlar yo'q 🎉", overdue_days:"kun kechikdi",
  due_today:"bugun to'lov kuni!",
- month_sum:"Oy yakunlari", income:"Daromad (ijara)", month_exp:"Xarajatlar", month_sales:"Sotuvlar",
+ month_sum:"Oy yakunlari", income:"Daromad", month_exp:"Xarajatlar", month_sales:"Sotuvlar",
+ analytics:"Analitika", chart_ie:"Daromad va xarajatlar, 12 oy", occupancy:"Bandlik",
+ occupied:"Ijarada", free_units:"Bo'sh", net_by_house:"Uylar bo'yicha foyda (butun davr)",
+ no_data:"Hozircha ma'lumot yo'q — birinchi to'lovlardan keyin paydo bo'ladi",
  profile:"Profil", name:"Ism", language:"Til", new_password:"Yangi parol (ixtiyoriy)",
  tg_chat:"Telegram chat ID (eslatmalar uchun)", tg_hint:"ID ni bilish: Telegramda @userinfobot ga yozing. Qarzdorlar haqida eslatma har kuni 9:00 da keladi.",
- tg_test:"Bildirishnomani tekshirish", tg_off:"Telegram-bot sozlanmagan (config.py dagi BOT_TOKEN)",
+ tg_test:"Bildirishnomani tekshirish", tg_off:"Telegram-bot sozlanmagan (BOT_TOKEN)",
  users:"Foydalanuvchilar", add_user:"Foydalanuvchi qo'shish", role:"Rol", admin:"Admin", user:"Xodim",
  logout:"Chiqish", saved:"Saqlandi ✅", added:"Qo'shildi ✅", deleted:"O'chirildi",
  error:"Xatolik", wrong_login:"Login yoki parol noto'g'ri", required:"Majburiy maydonlarni to'ldiring",
- already_tenant:"Uyda allaqachon ijarachi bor",
  months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentyabr","Oktyabr","Noyabr","Dekabr"],
+ months_s:["yan","fev","mar","apr","may","iyn","iyl","avg","sen","okt","noy","dek"],
  sum:"so'm",
 }};
 
@@ -261,13 +328,20 @@ async function toggleLang(){
 }
 
 /* ================= helpers ================= */
-const STATE = { user:null, tab:"houses", filter:"all", houses:[] };
+const STATE = { user:null, tab:"houses", filter:"all", q:"", sort:"new", houses:[] };
 
 function fmt(a, cur){
   if (a === null || a === undefined) return "—";
   const n = a === Math.trunc(a) ? Math.trunc(a).toLocaleString("ru-RU")
         : a.toLocaleString("ru-RU",{maximumFractionDigits:2});
   return cur === "USD" ? "$" + n : n + " " + t("sum");
+}
+function fmtC(v){ // compact for chart axes
+  const a = Math.abs(v);
+  if (a >= 1e9) return (v/1e9).toFixed(1).replace(/\.0$/,"") + "B";
+  if (a >= 1e6) return (v/1e6).toFixed(1).replace(/\.0$/,"") + "M";
+  if (a >= 1e3) return (v/1e3).toFixed(0) + "K";
+  return "" + Math.round(v);
 }
 function fmtDate(iso){
   if (!iso) return "—";
@@ -288,6 +362,13 @@ async function api(path, method="GET", body=null){
   if (!r.ok) throw new Error(data.error || t("error"));
   return data;
 }
+async function apiUpload(path, formData){
+  const r = await fetch(path, { method:"POST", body: formData });
+  let data = {};
+  try { data = await r.json(); } catch(e){}
+  if (!r.ok) throw new Error(data.error || t("error"));
+  return data;
+}
 
 let toastTimer;
 function toast(msg){
@@ -301,6 +382,7 @@ function toast(msg){
 
 function closeModal(){ document.querySelectorAll(".modal-bg").forEach(e=>e.remove()); }
 function closeSheet(){ document.querySelectorAll(".sheet").forEach(e=>e.remove()); }
+function closeViewer(){ document.querySelectorAll(".viewer").forEach(e=>e.remove()); }
 function modal(html){
   closeModal();
   const bg = document.createElement("div");
@@ -329,7 +411,7 @@ function segInit(id, def){
   });
 }
 function segVal(id){ const b = document.querySelector(`#${id} button.active`); return b ? b.dataset.v : null; }
-function currencySeg(id, def="UZS"){
+function currencySeg(id){
   return `<div class="seg" id="${id}">
     <button type="button" data-v="UZS">UZS (${t("sum")})</button>
     <button type="button" data-v="USD">USD ($)</button></div>`;
@@ -339,11 +421,22 @@ function monthOptions(){
   for (let off = 1; off >= -10; off--){
     const d = new Date(now.getFullYear(), now.getMonth() + off, 1);
     const v = `${d.getFullYear()}-${d.getMonth()+1}`;
-    const sel = off === 0 ? "selected" : "";
-    out += `<option value="${v}" ${sel}>${t("months")[d.getMonth()]} ${d.getFullYear()}</option>`;
+    out += `<option value="${v}" ${off===0?"selected":""}>${t("months")[d.getMonth()]} ${d.getFullYear()}</option>`;
   }
   return out;
 }
+
+/* tooltip */
+const tip = document.getElementById("tip");
+function showTip(html, x, y){
+  tip.innerHTML = html; tip.style.display = "block";
+  const w = tip.offsetWidth, ww = window.innerWidth;
+  let left = x - w/2; left = Math.max(8, Math.min(left, ww - w - 8));
+  tip.style.left = left + "px";
+  tip.style.top = Math.max(8, y - tip.offsetHeight - 14) + "px";
+}
+function hideTip(){ tip.style.display = "none"; }
+document.addEventListener("touchstart", e => { if (!e.target.closest(".bar-hit")) hideTip(); });
 
 /* ================= auth ================= */
 let NEEDS_SETUP = false;
@@ -399,7 +492,7 @@ function showMain(){
 /* ================= tabs ================= */
 function setTab(tab){
   STATE.tab = tab;
-  closeSheet(); closeModal();
+  closeSheet(); closeModal(); closeViewer(); hideTip();
   document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
   document.getElementById("tab-"+tab).classList.add("active");
   document.getElementById("fab").classList.toggle("hide", tab !== "houses");
@@ -411,46 +504,132 @@ const ST_CHIP = {available:"green", rented:"blue", sold:"gray", reserved:"amber"
 async function renderHouses(){
   const c = document.getElementById("content");
   const filters = ["all","sale","rent_free","rented","sold"];
-  c.innerHTML = `<div class="filters">` + filters.map(f =>
-    `<button class="${STATE.filter===f?'active':''}" onclick="STATE.filter='${f}';renderHouses()">${t("f_"+f)}</button>`
-  ).join("") + `</div><div id="houseList"><div class="empty">…</div></div>`;
-  let houses;
-  try { houses = await api("/api/houses?flt="+STATE.filter); } catch(e){ toast(e.message); return; }
-  STATE.houses = houses;
+  c.innerHTML = `
+    <div class="toolbar">
+      <input id="hsearch" placeholder="${esc(t("search_ph"))}" value="${esc(STATE.q)}">
+      <select id="hsort" onchange="STATE.sort=this.value;drawHouseList()">
+        <option value="new" ${STATE.sort==='new'?'selected':''}>${t("sort_new")}</option>
+        <option value="price_desc" ${STATE.sort==='price_desc'?'selected':''}>${t("sort_price_desc")}</option>
+        <option value="price_asc" ${STATE.sort==='price_asc'?'selected':''}>${t("sort_price_asc")}</option>
+      </select>
+    </div>
+    <div class="filters">` + filters.map(f =>
+      `<button class="${STATE.filter===f?'active':''}" onclick="STATE.filter='${f}';renderHouses()">${t("f_"+f)}</button>`
+    ).join("") + `</div><div id="houseList"><div class="empty">…</div></div>`;
+  document.getElementById("hsearch").addEventListener("input", e => {
+    STATE.q = e.target.value; drawHouseList();
+  });
+  try { STATE.houses = await api("/api/houses?flt="+STATE.filter); }
+  catch(e){ toast(e.message); return; }
+  drawHouseList();
+}
+function drawHouseList(){
   const list = document.getElementById("houseList");
-  if (!houses.length){ list.innerHTML = `<div class="empty">${esc(t("no_houses"))}</div>`; return; }
+  if (!list) return;
+  let houses = [...STATE.houses];
+  const q = STATE.q.trim().toLowerCase();
+  if (q) houses = houses.filter(h =>
+    (h.address||"").toLowerCase().includes(q) ||
+    (h.district||"").toLowerCase().includes(q) ||
+    (h.owner_name||"").toLowerCase().includes(q) ||
+    (h.tenant_name||"").toLowerCase().includes(q));
+  if (STATE.sort === "price_desc") houses.sort((a,b)=>(b.purchase_price??-1)-(a.purchase_price??-1));
+  if (STATE.sort === "price_asc") houses.sort((a,b)=>(a.purchase_price??1e18)-(b.purchase_price??1e18));
+  if (!houses.length){
+    list.innerHTML = `<div class="empty">${esc(q ? t("nothing_found") : t("no_houses"))}</div>`;
+    return;
+  }
   list.innerHTML = houses.map(h => {
-    let sub = `<span class="chip ${h.deal_type==='sale'?'amber':'blue'}">${t("deal_"+h.deal_type)}</span>
-      <span class="chip ${ST_CHIP[h.status]}">${t("st_"+h.status)}</span>`;
+    const thumb = h.thumb
+      ? `<img class="hthumb" src="/photos/${h.thumb}" alt="" loading="lazy">`
+      : `<div class="hthumb ph">🏠</div>`;
     let extra = "";
     if (h.tenant_name){
-      const pd = h.paid_this_month;
-      extra = `<div class="muted" style="margin-top:6px">👤 ${esc(h.tenant_name)} ·
-        ${fmt(h.rent_amount,h.rent_currency)}
-        <span class="chip ${pd?'green':'red'}" style="margin-left:4px">${pd?t("paid"):t("not_paid")}</span></div>`;
+      extra = `<div class="muted" style="margin-top:6px">👤 ${esc(h.tenant_name)} · ${fmt(h.rent_amount,h.rent_currency)}
+        <span class="chip ${h.paid_this_month?'green':'red'}" style="margin-left:4px">${h.paid_this_month?t("paid"):t("not_paid")}</span></div>`;
     } else if (h.purchase_price){
-      extra = `<div class="muted" style="margin-top:6px">💰 ${t("bought_for")}: ${fmt(h.purchase_price,h.purchase_currency)}</div>`;
+      extra = `<div class="muted" style="margin-top:6px">💰 ${fmt(h.purchase_price,h.purchase_currency)}</div>`;
     }
-    return `<div class="card tap" onclick="openHouse(${h.id})">
-      <div class="row"><div class="big">${esc(h.address)}</div></div>
-      ${h.district?`<div class="muted">🗺 ${esc(h.district)}</div>`:""}
-      <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">${sub}</div>
-      ${extra}</div>`;
+    return `<div class="card tap hcard" onclick="openHouse(${h.id})">
+      ${thumb}
+      <div style="flex:1;min-width:0">
+        <div class="big">${esc(h.address)}</div>
+        ${h.district?`<div class="muted">${esc(h.district)}</div>`:""}
+        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip ${h.deal_type==='sale'?'gold':'blue'}">${t("deal_"+h.deal_type)}</span>
+          <span class="chip ${ST_CHIP[h.status]}">${t("st_"+h.status)}</span></div>
+        ${extra}
+      </div></div>`;
   }).join("");
 }
 
 async function openHouse(id){
   let h;
   try { h = await api("/api/houses/"+id); } catch(e){ toast(e.message); return; }
-  const s = sheet(h.address, houseDetailHtml(h));
-  s.dataset.houseId = id;
+  sheet(h.address, houseDetailHtml(h));
 }
-function refreshHouse(id){ closeModal(); openHouse(id); }
+function refreshHouse(id){ closeModal(); closeViewer(); openHouse(id); }
+
+function galleryHtml(h){
+  const shots = h.photos.map(p =>
+    `<img src="/photos/${p.filename}" alt="" loading="lazy"
+       onclick="openViewer('${p.filename}',${p.id},${h.id})">`).join("");
+  return `<div class="gallery">${shots}
+    <button class="addph" onclick="document.getElementById('phInput').click()">＋</button></div>
+    <input type="file" id="phInput" accept="image/*" class="hide"
+      onchange="uploadPhoto(this,${h.id})">`;
+}
+function openViewer(filename, pid, hid){
+  closeViewer();
+  const v = document.createElement("div");
+  v.className = "viewer";
+  v.innerHTML = `<img src="/photos/${filename}">
+    <div class="vbtns">
+      <button class="btn small secondary" onclick="closeViewer()">${t("cancel")}</button>
+      <button class="btn small danger" onclick="delPhoto(${pid},${hid})">🗑 ${t("delete")}</button>
+    </div>`;
+  v.addEventListener("click", e => { if (e.target === v) closeViewer(); });
+  document.getElementById("overlays").appendChild(v);
+}
+async function uploadPhoto(input, hid){
+  const file = input.files && input.files[0];
+  if (!file) return;
+  toast(t("uploading"));
+  try {
+    const blob = await compressImage(file);
+    const fd = new FormData();
+    fd.append("file", blob, "photo.jpg");
+    await apiUpload(`/api/houses/${hid}/photos`, fd);
+    toast(t("added")); refreshHouse(hid);
+  } catch(e){ toast(e.message); }
+}
+function compressImage(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 1600;
+      let {width:w, height:h} = img;
+      if (Math.max(w,h) > MAX){ const k = MAX/Math.max(w,h); w = Math.round(w*k); h = Math.round(h*k); }
+      const cv = document.createElement("canvas");
+      cv.width = w; cv.height = h;
+      cv.getContext("2d").drawImage(img, 0, 0, w, h);
+      cv.toBlob(b => b ? resolve(b) : reject(new Error(t("error"))), "image/jpeg", .85);
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => reject(new Error(t("error")));
+    img.src = URL.createObjectURL(file);
+  });
+}
+async function delPhoto(pid, hid){
+  if (!confirm(t("delete_photo_q"))) return;
+  try { await api("/api/photos/"+pid,"DELETE"); refreshHouse(hid); } catch(e){ toast(e.message); }
+}
 
 function houseDetailHtml(h){
-  let html = `<div class="card">
+  let html = galleryHtml(h);
+  html += `<div class="card" style="margin-top:12px">
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-      <span class="chip ${h.deal_type==='sale'?'amber':'blue'}">${t("deal_"+h.deal_type)}</span>
+      <span class="chip ${h.deal_type==='sale'?'gold':'blue'}">${t("deal_"+h.deal_type)}</span>
       <span class="chip ${ST_CHIP[h.status]}">${t("st_"+h.status)}</span>
     </div>
     ${h.district?`<div class="list-line">🗺 ${esc(h.district)}</div>`:""}
@@ -459,11 +638,10 @@ function houseDetailHtml(h){
     ${h.rent_income.length?`<div class="list-line">📈 ${t("rent_income")}: <b>${moneyList(h.rent_income)}</b></div>`:""}
     ${h.expenses_total.length?`<div class="list-line">🧾 ${t("expenses")}: <b>${moneyList(h.expenses_total)}</b></div>`:""}
     ${h.status==='sold'&&h.sale_price?`<div class="list-line">✅ ${t("sold_for")}: <b>${fmt(h.sale_price,h.sale_currency)}</b>${h.sale_buyer?` (${esc(h.sale_buyer)})`:""} · ${fmtDate(h.sale_date)}</div>`:""}
-    ${h.profit!==undefined?`<div class="list-line">💹 ${t("profit")}: <b style="color:${h.profit>=0?'var(--green)':'var(--red)'}">${fmt(h.profit,h.profit_currency)}</b></div>`:""}
+    ${h.profit!==undefined?`<div class="list-line">💹 ${t("profit")}: <b style="color:${h.profit>=0?'var(--emerald)':'var(--red)'}">${fmt(h.profit,h.profit_currency)}</b></div>`:""}
     ${h.notes?`<div class="list-line muted">📝 ${esc(h.notes)}</div>`:""}
   </div>`;
 
-  // tenant block
   if (h.tenant){
     const tn = h.tenant, pd = tn.paid_this_month;
     html += `<div class="section-title">👥 ${t("tenant")}</div><div class="card">
@@ -481,7 +659,6 @@ function houseDetailHtml(h){
     html += `<button class="btn" onclick="openMoveInForm(${h.id})">👥 ${t("move_in")}</button>`;
   }
 
-  // actions
   html += `<div class="btn-row">
     <button class="btn small secondary" onclick="openExpenseForm(${h.id})">🧾 ${t("add_expense")}</button>
     <button class="btn small secondary" onclick="openPartnerForm(${h.id})">🤝 ${t("add_partner")}</button>
@@ -490,7 +667,6 @@ function houseDetailHtml(h){
     <button class="btn small danger" onclick="delHouse(${h.id})">🗑 ${t("delete")}</button>
   </div>`;
 
-  // partners
   if (h.partners.length){
     html += `<div class="section-title">🤝 ${t("partners")}</div><div class="card">` +
       h.partners.map(p => `<div class="list-line row"><div>👤 <b>${esc(p.name)}</b>
@@ -498,16 +674,12 @@ function houseDetailHtml(h){
         ${p.invested?`<div class="muted">${t("invested")}: ${fmt(p.invested,p.invested_currency)}</div>`:""}</div>
         <button class="btn small danger" onclick="delPartner(${p.id},${h.id})">✕</button></div>`).join("") + `</div>`;
   }
-
-  // payments
   if (h.payments.length){
     html += `<div class="section-title">💵 ${t("payments")}</div><div class="card">` +
       h.payments.map(p => `<div class="list-line row"><div>${fmtDate(p.paid_at)} — <b>${fmt(p.amount,p.currency)}</b>
         <div class="muted">${esc(p.tenant_name)} · ${t("months")[p.period_month-1]} ${p.period_year}${p.note?` · ${esc(p.note)}`:""}</div></div>
         <button class="btn small danger" onclick="delPayment(${p.id},${h.id})">✕</button></div>`).join("") + `</div>`;
   }
-
-  // expenses
   if (h.expenses.length){
     html += `<div class="section-title">🧾 ${t("expenses")}</div><div class="card">` +
       h.expenses.map(e => `<div class="list-line row"><div>${fmtDate(e.spent_at)} — ${t("cat_"+e.category)}: <b>${fmt(e.amount,e.currency)}</b>
@@ -515,8 +687,6 @@ function houseDetailHtml(h){
         <button class="btn small danger" onclick="delExpense(${e.id},${h.id})">✕</button></div>`).join("") +
       `<div class="list-line"><b>${t("total")}: ${moneyList(h.expenses_total)}</b></div></div>`;
   }
-
-  // tenant history
   if (h.history.length){
     html += `<div class="section-title">📜 ${t("history")}</div><div class="card">` +
       h.history.map(x => `<div class="list-line">👤 <b>${esc(x.name)}</b>${x.phone?` · ${esc(x.phone)}`:""}
@@ -527,13 +697,10 @@ function houseDetailHtml(h){
   return html;
 }
 
-/* ---------- house form (add/edit) ---------- */
+/* ---------- forms (house/partner/tenant/payment/expense/sold) ---------- */
 function openHouseForm(id){
-  const h = id ? null : {};
-  const edit = !!id;
-  const src = edit ? STATE._editHouse : null;
   const build = (hh) => {
-    modal(`<h3>${edit?t("edit_house"):t("add_house")}</h3>
+    modal(`<h3>${id?t("edit_house"):t("add_house")}</h3>
       <label>${t("address")} *</label><input id="hf_address" value="${esc(hh.address||"")}">
       <label>${t("district")}</label><input id="hf_district" value="${esc(hh.district||"")}">
       <label>${t("deal_type")}</label>
@@ -550,9 +717,8 @@ function openHouseForm(id){
     segInit("hf_deal", hh.deal_type || "rent");
     segInit("hf_cur", hh.purchase_currency || "USD");
   };
-  if (edit){
-    api("/api/houses/"+id).then(hh => { STATE._editHouse = hh; build(hh); }).catch(e=>toast(e.message));
-  } else build({});
+  if (id) api("/api/houses/"+id).then(build).catch(e=>toast(e.message));
+  else build({});
 }
 async function saveHouse(id){
   const address = document.getElementById("hf_address").value.trim();
@@ -580,10 +746,8 @@ async function delHouse(id){
   try { await api("/api/houses/"+id,"DELETE"); toast(t("deleted")); closeSheet(); renderHouses(); }
   catch(e){ toast(e.message); }
 }
-
-/* ---------- partner ---------- */
 function openPartnerForm(hid){
-  modal(`<h3>${t("add_partner")}</h3>
+  modal(`<h3>🤝 ${t("add_partner")}</h3>
     <label>${t("partner_name")} *</label><input id="pf_name">
     <label>${t("share")}</label><input id="pf_share" inputmode="decimal">
     <label>${t("invested")}</label><input id="pf_inv" inputmode="decimal">
@@ -607,11 +771,9 @@ async function savePartner(hid){
 async function delPartner(pid, hid){
   try { await api("/api/partners/"+pid,"DELETE"); refreshHouse(hid); } catch(e){ toast(e.message); }
 }
-
-/* ---------- move in / out ---------- */
 function openMoveInForm(hid){
   const today = new Date().toISOString().slice(0,10);
-  modal(`<h3>${t("move_in")}</h3>
+  modal(`<h3>👥 ${t("move_in")}</h3>
     <label>${t("tenant_name")} *</label><input id="mi_name">
     <label>${t("phone")}</label><input id="mi_phone" inputmode="tel">
     <label>${t("passport")}</label><input id="mi_pass">
@@ -644,15 +806,13 @@ async function moveOut(tid, hid){
   try { await api(`/api/tenants/${tid}/moveout`,"POST"); toast(t("saved")); refreshHouse(hid); }
   catch(e){ toast(e.message); }
 }
-
-/* ---------- payment ---------- */
 async function openPayForm(tid, hid){
   let tn = null;
   try {
     const tenants = await api("/api/tenants");
     tn = tenants.find(x => x.id === tid);
   } catch(e){}
-  modal(`<h3>${t("add_payment")}${tn?` — ${esc(tn.name)}`:""}</h3>
+  modal(`<h3>💵 ${t("add_payment")}${tn?` — ${esc(tn.name)}`:""}</h3>
     <label>${t("amount")} *</label><input id="pay_amount" inputmode="decimal" value="${tn?tn.rent_amount:""}">
     <label>${t("currency")}</label>${currencySeg("pay_cur")}
     <label>${t("for_month")}</label><select id="pay_period">${monthOptions()}</select>
@@ -670,17 +830,16 @@ async function savePayment(tid, hid){
       period_year: y, period_month: m,
       note: document.getElementById("pay_note").value.trim() || null });
     toast(t("saved"));
-    if (hid) refreshHouse(hid); else { closeModal(); renderTenants(); }
+    if (hid) refreshHouse(hid);
+    else { closeModal(); if (STATE.tab==='tenants') renderTenants(); else if (STATE.tab==='reports') renderReports(); }
   } catch(e){ toast(e.message); }
 }
 async function delPayment(pid, hid){
   try { await api("/api/payments/"+pid,"DELETE"); refreshHouse(hid); } catch(e){ toast(e.message); }
 }
-
-/* ---------- expense ---------- */
 function openExpenseForm(hid){
   const cats = ["electricity","gas","water","communal","repair","other"];
-  modal(`<h3>${t("add_expense")}</h3>
+  modal(`<h3>🧾 ${t("add_expense")}</h3>
     <label>${t("category")}</label>
     <select id="ex_cat">${cats.map(c=>`<option value="${c}">${t("cat_"+c)}</option>`).join("")}</select>
     <label>${t("amount")} *</label><input id="ex_amount" inputmode="decimal">
@@ -703,8 +862,6 @@ async function saveExpense(hid){
 async function delExpense(eid, hid){
   try { await api("/api/expenses/"+eid,"DELETE"); refreshHouse(hid); } catch(e){ toast(e.message); }
 }
-
-/* ---------- sold ---------- */
 function openSoldForm(hid){
   modal(`<h3>✅ ${t("mark_sold")}</h3>
     <label>${t("sale_price")} *</label><input id="so_price" inputmode="decimal">
@@ -743,18 +900,136 @@ async function renderTenants(){
     </div></div>`).join("");
 }
 
+/* ================= charts (validated palette on dark surface) ================= */
+const CH = { income:"#3987e5", expense:"#d95926", neg:"#e66767", gray:"#3a4150",
+             grid:"#2c2c2a", axis:"#383835", label:"#898781" };
+
+function roundTopBar(x, y, w, h, r){
+  if (h <= 0) return "";
+  r = Math.min(r, w/2, h);
+  return `M${x},${y+h} L${x},${y+r} Q${x},${y} ${x+r},${y} L${x+w-r},${y}
+          Q${x+w},${y} ${x+w},${y+r} L${x+w},${y+h} Z`;
+}
+
+function ieChart(monthly, cur){
+  const W = 360, H = 190, padL = 34, padR = 6, padT = 16, padB = 24;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const vals = monthly.flatMap(m => [m.income[cur]||0, m.expense[cur]||0]);
+  const max = Math.max(...vals, 1);
+  const groupW = plotW / 12, barW = Math.min(9, (groupW - 6) / 2);
+  let bars = "", hits = "", maxLabel = "";
+  let peak = {v:-1};
+  monthly.forEach((m, i) => {
+    const gx = padL + i * groupW + (groupW - barW*2 - 2) / 2;
+    const iv = m.income[cur]||0, ev = m.expense[cur]||0;
+    const ih = iv/max*plotH, eh = ev/max*plotH;
+    bars += `<path d="${roundTopBar(gx, padT+plotH-ih, barW, ih, 4)}" fill="${CH.income}"/>`;
+    bars += `<path d="${roundTopBar(gx+barW+2, padT+plotH-eh, barW, eh, 4)}" fill="${CH.expense}"/>`;
+    if (iv > peak.v) peak = {v:iv, x:gx+barW/2, y:padT+plotH-ih};
+    const label = `${t("months_s")[m.month-1]} ${String(m.year).slice(2)}`;
+    hits += `<rect class="bar-hit" x="${padL+i*groupW}" y="${padT}" width="${groupW}" height="${plotH}"
+      fill="transparent" data-tip="${esc(`<b>${t("months")[m.month-1]} ${m.year}</b><br>
+        ${t("income")}: ${fmt(iv,cur)}<br>${t("month_exp")}: ${fmt(ev,cur)}`)}"/>`;
+    if (i % 2 === 0) bars += `<text x="${padL+i*groupW+groupW/2}" y="${H-8}" fill="${CH.label}"
+      font-size="9.5" text-anchor="middle">${label}</text>`;
+  });
+  if (peak.v > 0) maxLabel = `<text x="${peak.x}" y="${Math.max(10,peak.y-5)}" fill="var(--sec)"
+    font-size="10" font-weight="700" text-anchor="middle">${fmtC(peak.v)}</text>`;
+  let grid = "";
+  [0, .5, 1].forEach(f => {
+    const y = padT + plotH - f*plotH;
+    grid += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}"
+      stroke="${f===0?CH.axis:CH.grid}" stroke-width="1"/>`;
+    if (f > 0) grid += `<text x="${padL-5}" y="${y+3.5}" fill="${CH.label}" font-size="9.5"
+      text-anchor="end">${fmtC(max*f)}</text>`;
+  });
+  return `<div class="viz-root">
+    <div class="vtitle">${t("chart_ie")} — ${cur === "USD" ? "USD" : "UZS"}</div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">${grid}${bars}${maxLabel}${hits}</svg>
+    <div class="legend">
+      <span class="li"><span class="sw" style="background:${CH.income}"></span>${t("income")}</span>
+      <span class="li"><span class="sw" style="background:${CH.expense}"></span>${t("month_exp")}</span>
+    </div></div>`;
+}
+
+function occupancyChart(occ){
+  const total = occ.rented + occ.free;
+  if (!total) return "";
+  const R = 40, CW = 14, C = 2 * Math.PI * R;
+  const gap = total > 1 && occ.rented > 0 && occ.free > 0 ? 3 : 0;
+  const rentLen = C * occ.rented / total - gap;
+  const freeLen = C * occ.free / total - gap;
+  const pct = Math.round(100 * occ.rented / total);
+  let segs = `<circle cx="60" cy="60" r="${R}" fill="none" stroke="${CH.gray}" stroke-width="${CW}"/>`;
+  if (occ.rented > 0) segs += `<circle cx="60" cy="60" r="${R}" fill="none" stroke="${CH.income}"
+    stroke-width="${CW}" stroke-dasharray="${Math.max(rentLen,0)} ${C}" stroke-dashoffset="0"
+    transform="rotate(-90 60 60)" stroke-linecap="butt"/>`;
+  return `<div class="viz-root">
+    <div class="vtitle">${t("occupancy")}</div>
+    <div style="display:flex;align-items:center;gap:18px">
+      <svg viewBox="0 0 120 120" width="116" style="flex-shrink:0">${segs}
+        <text x="60" y="58" fill="var(--text)" font-size="22" font-weight="800" text-anchor="middle">${pct}%</text>
+        <text x="60" y="74" fill="${CH.label}" font-size="9.5" text-anchor="middle">${t("occupied")}</text>
+      </svg>
+      <div class="legend" style="flex-direction:column;gap:9px;margin-top:0">
+        <span class="li"><span class="sw" style="background:${CH.income}"></span>${t("occupied")}: <b style="color:var(--text)">${occ.rented}</b></span>
+        <span class="li"><span class="sw" style="background:${CH.gray}"></span>${t("free_units")}: <b style="color:var(--text)">${occ.free}</b></span>
+      </div></div></div>`;
+}
+
+function netChart(housesNet){
+  const byCur = {};
+  housesNet.forEach(h => {
+    Object.entries(h.net).forEach(([cur, v]) => {
+      (byCur[cur] = byCur[cur] || []).push({address:h.address, v});
+    });
+  });
+  let html = "";
+  Object.entries(byCur).forEach(([cur, rows]) => {
+    rows.sort((a,b)=>b.v-a.v);
+    rows = rows.slice(0, 8);
+    const maxAbs = Math.max(...rows.map(r=>Math.abs(r.v)), 1);
+    html += `<div class="viz-root"><div class="vtitle">${t("net_by_house")} — ${cur === "USD" ? "USD" : "UZS"}</div>` +
+      rows.map(r => {
+        const w = Math.max(3, Math.abs(r.v)/maxAbs*100);
+        const color = r.v >= 0 ? CH.income : CH.neg;
+        return `<div class="nrow bar-hit" data-tip="${esc(`<b>${r.address}</b><br>${fmt(r.v,cur)}`)}">
+          <div class="nname">${esc(r.address)}</div>
+          <div class="ntrack"><div class="nbar" style="width:${w}%;background:${color}"></div>
+          <span class="nval" style="color:${r.v>=0?'var(--sec)':'var(--red)'}">${fmtC(r.v)}</span></div></div>`;
+      }).join("") + `</div>`;
+  });
+  return html;
+}
+
+function attachChartTips(root){
+  root.querySelectorAll(".bar-hit").forEach(el => {
+    const html = el.dataset.tip;
+    if (!html) return;
+    el.addEventListener("mouseenter", e => showTip(html, e.clientX, e.clientY));
+    el.addEventListener("mousemove", e => showTip(html, e.clientX, e.clientY));
+    el.addEventListener("mouseleave", hideTip);
+    el.addEventListener("touchstart", e => {
+      const tch = e.touches[0];
+      showTip(html, tch.clientX, tch.clientY);
+    }, {passive:true});
+  });
+}
+
 /* ================= reports ================= */
 async function renderReports(){
   const c = document.getElementById("content");
   c.innerHTML = `<div class="empty">…</div>`;
-  let r;
-  try { r = await api("/api/reports"); } catch(e){ toast(e.message); return; }
+  let r, an;
+  try {
+    [r, an] = await Promise.all([api("/api/reports"), api("/api/analytics")]);
+  } catch(e){ toast(e.message); return; }
   const cn = r.counts;
   let html = `<div class="stat-grid">
-    <div class="stat"><div class="n">${cn.sale}</div><div class="l">🏷 ${t("in_sale")}</div></div>
-    <div class="stat"><div class="n">${cn.rent_free}</div><div class="l">🔑 ${t("free_rent")}</div></div>
-    <div class="stat"><div class="n">${cn.rented}</div><div class="l">👥 ${t("rented_c")}</div></div>
-    <div class="stat"><div class="n">${cn.sold}</div><div class="l">✅ ${t("sold_c")}</div></div>
+    <div class="stat"><div class="n" style="color:var(--gold-2)">${cn.sale}</div><div class="l">🏷 ${t("in_sale")}</div></div>
+    <div class="stat"><div class="n" style="color:var(--emerald)">${cn.rent_free}</div><div class="l">🔑 ${t("free_rent")}</div></div>
+    <div class="stat"><div class="n" style="color:#7ab2f2">${cn.rented}</div><div class="l">👥 ${t("rented_c")}</div></div>
+    <div class="stat"><div class="n" style="color:var(--sec)">${cn.sold}</div><div class="l">✅ ${t("sold_c")}</div></div>
   </div>`;
 
   html += `<div class="section-title">⚠️ ${t("debtors")}</div>`;
@@ -771,11 +1046,27 @@ async function renderReports(){
   const m = r.month;
   html += `<div class="section-title">📅 ${t("month_sum")} — ${t("months")[m.month-1]} ${m.year}</div>
     <div class="card">
-      <div class="list-line row"><span>📈 ${t("income")}</span><b>${moneyList(m.income)}</b></div>
-      <div class="list-line row"><span>🧾 ${t("month_exp")}</span><b>${moneyList(m.expense)}</b></div>
-      <div class="list-line row"><span>🏷 ${t("month_sales")}</span><b>${moneyList(m.sales)}</b></div>
+      <div class="list-line row"><span class="muted">📈 ${t("income")}</span><b>${moneyList(m.income)}</b></div>
+      <div class="list-line row"><span class="muted">🧾 ${t("month_exp")}</span><b>${moneyList(m.expense)}</b></div>
+      <div class="list-line row"><span class="muted">🏷 ${t("month_sales")}</span><b>${moneyList(m.sales)}</b></div>
     </div>`;
+
+  // analytics
+  html += `<div class="section-title">📊 ${t("analytics")}</div>`;
+  const curs = new Set();
+  an.monthly.forEach(mm => {
+    Object.keys(mm.income).forEach(cu=>curs.add(cu));
+    Object.keys(mm.expense).forEach(cu=>curs.add(cu));
+  });
+  if (!curs.size && !an.occupancy.rented && !an.occupancy.free){
+    html += `<div class="card muted">${t("no_data")}</div>`;
+  } else {
+    ["UZS","USD"].forEach(cu => { if (curs.has(cu)) html += ieChart(an.monthly, cu); });
+    html += occupancyChart(an.occupancy);
+    html += netChart(an.houses_net);
+  }
   c.innerHTML = html;
+  attachChartTips(c);
 }
 
 /* ================= settings ================= */
@@ -790,11 +1081,10 @@ async function renderSettings(){
       <button type="button" data-v="uz">O'zbekcha</button></div>
     <label>${t("new_password")}</label><input id="st_pass" type="password" autocomplete="new-password">
     <label>${t("tg_chat")}</label><input id="st_tg" inputmode="numeric" value="${esc(u.tg_chat_id||"")}">
-    <div class="muted" style="margin-top:6px">${u.tg_enabled ? t("tg_hint") : "⚠️ " + t("tg_off")}</div>
+    <div class="muted" style="margin-top:8px;font-size:12.5px">${u.tg_enabled ? t("tg_hint") : "⚠️ " + t("tg_off")}</div>
     <button class="btn" onclick="saveProfile()">${t("save")}</button>
     ${u.tg_enabled?`<button class="btn secondary" onclick="testTg()">🔔 ${t("tg_test")}</button>`:""}
   </div>`;
-
   if (u.role === "admin"){
     html += `<div class="section-title">👥 ${t("users")}</div><div class="card" id="usersCard">…</div>
     <div class="card">

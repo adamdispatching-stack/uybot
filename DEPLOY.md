@@ -34,10 +34,13 @@ Windows remembers it.
    ⚠️ Without this, the database is ERASED on every deploy — Railway's disk is
    temporary. The volume keeps `realestate.db` safe.
 3. Service → **Variables** → add:
-   | Variable    | Value                    |
-   |-------------|--------------------------|
-   | `DB_PATH`   | `/data/realestate.db`    |
-   | `BOT_TOKEN` | your @BotFather token (optional, for Telegram reminders) |
+   | Variable     | Value                    |
+   |--------------|--------------------------|
+   | `DB_PATH`    | `/data/realestate.db`    |
+   | `PHOTOS_DIR` | `/data/photos`           |
+   | `BOT_TOKEN`  | your @BotFather token (optional, for Telegram reminders) |
+
+   (`PHOTOS_DIR` keeps uploaded house photos on the volume so they survive deploys.)
 4. Service → **Settings → Networking → Generate Domain** — you get a free
    HTTPS address like `uyweb-production.up.railway.app`.
    Give this link to your brother — it opens on any phone.

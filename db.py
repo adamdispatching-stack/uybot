@@ -84,6 +84,12 @@ CREATE TABLE IF NOT EXISTS expenses (
     spent_at    TEXT DEFAULT (date('now')),
     note        TEXT
 );
+CREATE TABLE IF NOT EXISTS photos (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    house_id    INTEGER NOT NULL REFERENCES houses(id) ON DELETE CASCADE,
+    filename    TEXT NOT NULL,
+    created_at  TEXT DEFAULT (datetime('now'))
+);
 """
 
 
@@ -405,6 +411,101 @@ def month_summary(year, month):
                              GROUP BY sale_currency""",
                           (str(year), f"{month:02d}")).fetchall()
     return income, expense, sales
+
+
+# ---------------- photos ----------------
+def add_photo(house_id, filename):
+    with conn() as c:
+        cur = c.execute("INSERT INTO photos (house_id, filename) VALUES (?,?)",
+                        (house_id, filename))
+        return cur.lastrowid
+
+
+def list_photos(house_id):
+    with conn() as c:
+        return c.execute("SELECT * FROM photos WHERE house_id=? ORDER BY id", (house_id,)).fetchall()
+
+
+def get_photo(pid):
+    with conn() as c:
+        return c.execute("SELECT * FROM photos WHERE id=?", (pid,)).fetchone()
+
+
+def photo_filename_exists(filename):
+    with conn() as c:
+        return c.execute("SELECT 1 FROM photos WHERE filename=?", (filename,)).fetchone() is not None
+
+
+def delete_photo(pid):
+    with conn() as c:
+        c.execute("DELETE FROM photos WHERE id=?", (pid,))
+
+
+def first_photos():
+    """house_id -> first photo filename, for list thumbnails."""
+    with conn() as c:
+        rows = c.execute("""SELECT house_id, MIN(id) mid FROM photos GROUP BY house_id""").fetchall()
+        out = {}
+        for r in rows:
+            p = c.execute("SELECT filename FROM photos WHERE id=?", (r["mid"],)).fetchone()
+            if p:
+                out[r["house_id"]] = p["filename"]
+        return out
+
+
+# ---------------- analytics ----------------
+def monthly_series(months=12):
+    """Last N months of rent income (by period) and expenses (by date), per currency."""
+    from datetime import date as _date
+    today = _date.today()
+    keys = []
+    y, m = today.year, today.month
+    for _ in range(months):
+        keys.append((y, m))
+        m -= 1
+        if m == 0:
+            y, m = y - 1, 12
+    keys.reverse()
+    out = [{"year": k[0], "month": k[1], "income": {}, "expense": {}} for k in keys]
+    idx = {k: i for i, k in enumerate(keys)}
+    with conn() as c:
+        for r in c.execute("""SELECT period_year y, period_month m, currency, SUM(amount) total
+                              FROM payments GROUP BY y, m, currency""").fetchall():
+            k = (r["y"], r["m"])
+            if k in idx:
+                out[idx[k]]["income"][r["currency"]] = r["total"]
+        for r in c.execute("""SELECT CAST(strftime('%Y', spent_at) AS INT) y,
+                                     CAST(strftime('%m', spent_at) AS INT) m,
+                                     currency, SUM(amount) total
+                              FROM expenses GROUP BY y, m, currency""").fetchall():
+            k = (r["y"], r["m"])
+            if k in idx:
+                out[idx[k]]["expense"][r["currency"]] = r["total"]
+    return out
+
+
+def houses_net():
+    """Per house: rent income minus expenses, per currency; plus sold profit info."""
+    res = []
+    with conn() as c:
+        for h in c.execute("SELECT * FROM houses ORDER BY id").fetchall():
+            inc = {r["currency"]: r["total"] for r in c.execute(
+                "SELECT currency, SUM(amount) total FROM payments WHERE house_id=? GROUP BY currency",
+                (h["id"],)).fetchall()}
+            exp = {r["currency"]: r["total"] for r in c.execute(
+                "SELECT currency, SUM(amount) total FROM expenses WHERE house_id=? GROUP BY currency",
+                (h["id"],)).fetchall()}
+            net = {}
+            for cur in set(inc) | set(exp):
+                net[cur] = inc.get(cur, 0) - exp.get(cur, 0)
+            if h["status"] == "sold" and h["sale_price"] and h["purchase_price"] \
+                    and h["sale_currency"] == h["purchase_currency"]:
+                cur = h["sale_currency"]
+                net[cur] = net.get(cur, 0) + h["sale_price"] - h["purchase_price"]
+            if net:
+                res.append({"id": h["id"], "address": h["address"],
+                            "status": h["status"], "net": net})
+    return res
 
 
 def counts():

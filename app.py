@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 """UyWeb — real estate management web app. Run: python3 app.py"""
 import os
+import re
+import secrets
 from contextlib import asynccontextmanager
 from datetime import date
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, File, HTTPException, Request, Response, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
@@ -15,6 +17,10 @@ import notify
 from config import BOT_TOKEN, HOST, PORT, REMINDER_HOUR, TIMEZONE
 
 STATIC = os.path.join(os.path.dirname(__file__), "static")
+PHOTOS_DIR = os.getenv("PHOTOS_DIR", os.path.join(os.path.dirname(__file__), "photos"))
+os.makedirs(PHOTOS_DIR, exist_ok=True)
+MAX_PHOTO_MB = 10
+SAFE_PHOTO = re.compile(r"^[a-f0-9]{32}\.(jpg|jpeg|png|webp)$")
 
 
 @asynccontextmanager
@@ -192,6 +198,7 @@ def house_full(hid):
         today = date.today()
         d["tenant"]["paid_this_month"] = db.payment_exists(tnt["id"], today.year, today.month)
     d["history"] = db.rows_to_dicts(db.tenant_history(hid))
+    d["photos"] = db.rows_to_dicts(db.list_photos(hid))
     # profit for sold house (same currency only)
     if d["status"] == "sold" and d["sale_price"] and d["purchase_price"] \
             and d["purchase_currency"] == d["sale_currency"]:
@@ -206,7 +213,9 @@ def house_full(hid):
 def api_houses(flt: str = "all", user=Depends(current_user)):
     houses = db.rows_to_dicts(db.list_houses(flt))
     today = date.today()
+    thumbs = db.first_photos()
     for h in houses:
+        h["thumb"] = thumbs.get(h["id"])
         tnt = db.active_tenant_of_house(h["id"])
         if tnt:
             h["tenant_name"] = tnt["name"]
@@ -387,6 +396,60 @@ def api_expense_add(body: ExpenseIn, user=Depends(current_user)):
 def api_expense_delete(eid: int, user=Depends(current_user)):
     db.delete_expense(eid)
     return {"ok": True}
+
+
+# ------------------- photos -------------------
+EXT_BY_TYPE = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
+
+
+@app.post("/api/houses/{hid}/photos")
+async def api_photo_upload(hid: int, file: UploadFile = File(...), user=Depends(current_user)):
+    if not db.get_house(hid):
+        raise HTTPException(404, "house not found")
+    ext = EXT_BY_TYPE.get(file.content_type)
+    if not ext:
+        raise HTTPException(400, "only JPEG/PNG/WebP images")
+    data = await file.read()
+    if len(data) > MAX_PHOTO_MB * 1024 * 1024:
+        raise HTTPException(400, f"photo too large (max {MAX_PHOTO_MB} MB)")
+    filename = secrets.token_hex(16) + "." + ext
+    with open(os.path.join(PHOTOS_DIR, filename), "wb") as f:
+        f.write(data)
+    db.add_photo(hid, filename)
+    return {"photos": db.rows_to_dicts(db.list_photos(hid))}
+
+
+@app.get("/photos/{filename}")
+def api_photo_get(filename: str):
+    if not SAFE_PHOTO.match(filename) or not db.photo_filename_exists(filename):
+        raise HTTPException(404, "not found")
+    path = os.path.join(PHOTOS_DIR, filename)
+    if not os.path.isfile(path):
+        raise HTTPException(404, "not found")
+    return FileResponse(path)
+
+
+@app.delete("/api/photos/{pid}")
+def api_photo_delete(pid: int, user=Depends(current_user)):
+    p = db.get_photo(pid)
+    if p:
+        try:
+            os.remove(os.path.join(PHOTOS_DIR, p["filename"]))
+        except OSError:
+            pass
+        db.delete_photo(pid)
+    return {"ok": True}
+
+
+# ------------------- analytics -------------------
+@app.get("/api/analytics")
+def api_analytics(user=Depends(current_user)):
+    cn = db.counts()
+    return {
+        "monthly": db.monthly_series(12),
+        "occupancy": {"rented": cn["rented"], "free": cn["rent_free"]},
+        "houses_net": db.houses_net(),
+    }
 
 
 # ------------------- reports -------------------
