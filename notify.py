@@ -81,3 +81,19 @@ async def check_rents():
         for u in users:
             await send_telegram(u["tg_chat_id"],
                                 build_reminder_text(tnt, today, u["lang"] or "ru"))
+
+    # due / overdue tasks
+    tasks = db.due_tasks(today.isoformat())
+    if tasks:
+        for u in users:
+            lang = u["lang"] or "ru"
+            head = "📋 <b>Задачи на сегодня:</b>" if lang == "ru" else "📋 <b>Bugungi vazifalar:</b>"
+            lines = [head]
+            for tk in tasks:
+                s = f"• {tk['title']}"
+                if tk["address"]:
+                    s += f" — 🏠 {tk['address']}"
+                if tk["due_date"] < today.isoformat():
+                    s += " ⚠️"
+                lines.append(s)
+            await send_telegram(u["tg_chat_id"], "\n".join(lines))

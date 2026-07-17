@@ -208,6 +208,7 @@ main{padding:16px 14px 20px;max-width:640px;margin:0 auto}
   <nav>
     <button id="tab-houses" onclick="setTab('houses')"><span class="ico">🏠</span><span data-i18n="tab_houses"></span></button>
     <button id="tab-tenants" onclick="setTab('tenants')"><span class="ico">👥</span><span data-i18n="tab_tenants"></span></button>
+    <button id="tab-tasks" onclick="setTab('tasks')"><span class="ico">📋</span><span data-i18n="tab_tasks"></span></button>
     <button id="tab-reports" onclick="setTab('reports')"><span class="ico">📊</span><span data-i18n="tab_reports"></span></button>
     <button id="tab-settings" onclick="setTab('settings')"><span class="ico">⚙️</span><span data-i18n="tab_settings"></span></button>
   </nav>
@@ -261,6 +262,17 @@ ru:{
  users:"Пользователи", add_user:"Добавить пользователя", role:"Роль", admin:"Админ", user:"Сотрудник",
  logout:"Выйти", saved:"Сохранено ✅", added:"Добавлено ✅", deleted:"Удалено",
  error:"Ошибка", wrong_login:"Неверный логин или пароль", required:"Заполните обязательные поля",
+ accounts:"Доступы для оплаты", add_account:"Добавить доступ", acc_label:"Название (напр. Электричество — hisobot.uz)",
+ acc_no:"Лицевой счёт", acc_login:"Логин", acc_pass:"Пароль", copied:"Скопировано ✅",
+ tab_tasks:"Задачи", add_task:"Добавить задачу", task_title:"Что нужно сделать",
+ task_house:"Объект (не обязательно)", task_due:"Срок (не обязательно)", no_tasks:"Задач нет 🎉",
+ done_tasks:"Выполненные", no_house:"Без объекта", overdue:"просрочено",
+ list_price:"Цена в объявлении", public_show:"Показывать на публичной странице",
+ public_desc:"Описание для клиентов (публичное)",
+ share_title:"Публичная страница", share_hint:"Ссылка для клиентов: свободные объекты для продажи и аренды. Показываются только фото, район, адрес, цена в объявлении и публичное описание.",
+ agency_name_l:"Название агентства (на странице)", contact_phone_l:"Телефон для клиентов",
+ copy_link:"Копировать ссылку", open_link:"Открыть",
+ in_listing:"В объявлении",
  months:["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"],
  months_s:["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"],
  sum:"сум",
@@ -307,6 +319,17 @@ uz:{
  users:"Foydalanuvchilar", add_user:"Foydalanuvchi qo'shish", role:"Rol", admin:"Admin", user:"Xodim",
  logout:"Chiqish", saved:"Saqlandi ✅", added:"Qo'shildi ✅", deleted:"O'chirildi",
  error:"Xatolik", wrong_login:"Login yoki parol noto'g'ri", required:"Majburiy maydonlarni to'ldiring",
+ accounts:"To'lov uchun akkauntlar", add_account:"Akkaunt qo'shish", acc_label:"Nomi (mas. Elektr — hisobot.uz)",
+ acc_no:"Hisob raqami", acc_login:"Login", acc_pass:"Parol", copied:"Nusxalandi ✅",
+ tab_tasks:"Vazifalar", add_task:"Vazifa qo'shish", task_title:"Nima qilish kerak",
+ task_house:"Uy (ixtiyoriy)", task_due:"Muddat (ixtiyoriy)", no_tasks:"Vazifalar yo'q 🎉",
+ done_tasks:"Bajarilgan", no_house:"Uysiz", overdue:"muddati o'tgan",
+ list_price:"E'londagi narx", public_show:"Ochiq sahifada ko'rsatish",
+ public_desc:"Mijozlar uchun tavsif (ochiq)",
+ share_title:"Ochiq sahifa", share_hint:"Mijozlar uchun havola: sotuv va ijaraga bo'sh uylar. Faqat rasm, tuman, manzil, e'lon narxi va ochiq tavsif ko'rinadi.",
+ agency_name_l:"Agentlik nomi (sahifada)", contact_phone_l:"Mijozlar uchun telefon",
+ copy_link:"Havolani nusxalash", open_link:"Ochish",
+ in_listing:"E'londa",
  months:["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentyabr","Oktyabr","Noyabr","Dekabr"],
  months_s:["yan","fev","mar","apr","may","iyn","iyl","avg","sen","okt","noy","dek"],
  sum:"so'm",
@@ -496,7 +519,7 @@ function setTab(tab){
   document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
   document.getElementById("tab-"+tab).classList.add("active");
   document.getElementById("fab").classList.toggle("hide", tab !== "houses");
-  ({houses:renderHouses, tenants:renderTenants, reports:renderReports, settings:renderSettings}[tab])();
+  ({houses:renderHouses, tenants:renderTenants, tasks:renderTasks, reports:renderReports, settings:renderSettings}[tab])();
 }
 
 /* ================= houses ================= */
@@ -635,6 +658,7 @@ function houseDetailHtml(h){
     ${h.district?`<div class="list-line">🗺 ${esc(h.district)}</div>`:""}
     ${h.owner_name?`<div class="list-line">👤 ${t("owner")}: <b>${esc(h.owner_name)}</b>${h.owner_phone?` · <a href="tel:${esc(h.owner_phone)}">${esc(h.owner_phone)}</a>`:""}</div>`:""}
     ${h.purchase_price?`<div class="list-line">💰 ${t("bought_for")}: <b>${fmt(h.purchase_price,h.purchase_currency)}</b></div>`:""}
+    ${h.list_price?`<div class="list-line">🏷 ${t("in_listing")}: <b style="color:var(--gold-2)">${fmt(h.list_price,h.list_currency)}</b></div>`:""}
     ${h.rent_income.length?`<div class="list-line">📈 ${t("rent_income")}: <b>${moneyList(h.rent_income)}</b></div>`:""}
     ${h.expenses_total.length?`<div class="list-line">🧾 ${t("expenses")}: <b>${moneyList(h.expenses_total)}</b></div>`:""}
     ${h.status==='sold'&&h.sale_price?`<div class="list-line">✅ ${t("sold_for")}: <b>${fmt(h.sale_price,h.sale_currency)}</b>${h.sale_buyer?` (${esc(h.sale_buyer)})`:""} · ${fmtDate(h.sale_date)}</div>`:""}
@@ -666,6 +690,28 @@ function houseDetailHtml(h){
     <button class="btn small secondary" onclick="openHouseForm(${h.id})">✏️ ${t("edit_house")}</button>
     <button class="btn small danger" onclick="delHouse(${h.id})">🗑 ${t("delete")}</button>
   </div>`;
+
+  // utility payment accounts
+  html += `<div class="section-title">🔐 ${t("accounts")}</div><div class="card">` +
+    (h.accounts.length ? h.accounts.map(a => {
+      const rowc = (icon, label, val, mask) => val ? `
+        <div class="list-line row"><div style="min-width:0"><span class="muted">${icon} ${label}:</span>
+          <b class="accval" data-v="${esc(val)}" ${mask?'data-mask="1"':''} style="cursor:pointer;word-break:break-all">${mask?"••••••":esc(val)}</b></div>
+          <button class="btn small secondary" onclick="copyVal(this)" data-v="${esc(val)}">📋</button></div>` : "";
+      return `<div style="padding:6px 0;border-bottom:1px solid var(--border)">
+        <div class="row"><b>${esc(a.label)}</b>
+          <button class="btn small danger" onclick="delAccount(${a.id},${h.id})">✕</button></div>
+        ${rowc("🧾", t("acc_no"), a.account_no, false)}
+        ${rowc("👤", t("acc_login"), a.login, false)}
+        ${rowc("🔑", t("acc_pass"), a.password, true)}
+        ${a.note?`<div class="muted">📝 ${esc(a.note)}</div>`:""}</div>`;
+    }).join("") : "") +
+    `<button class="btn small secondary" style="margin-top:10px" onclick="openAccountForm(${h.id})">➕ ${t("add_account")}</button></div>`;
+
+  // tasks for this house
+  html += `<div class="section-title">📋 ${t("tab_tasks")}</div><div class="card">` +
+    (h.tasks.length ? h.tasks.map(tk => taskRowHtml(tk, h.id)).join("") : "") +
+    `<button class="btn small secondary" style="margin-top:10px" onclick="openTaskForm(${h.id})">➕ ${t("add_task")}</button></div>`;
 
   if (h.partners.length){
     html += `<div class="section-title">🤝 ${t("partners")}</div><div class="card">` +
@@ -711,11 +757,20 @@ function openHouseForm(id){
       <label>${t("currency")}</label>${currencySeg("hf_cur")}
       <label>${t("owner")}</label><input id="hf_owner" value="${esc(hh.owner_name||"")}">
       <label>${t("owner_phone")}</label><input id="hf_ophone" inputmode="tel" value="${esc(hh.owner_phone||"")}">
+      <label>${t("list_price")}</label><input id="hf_lprice" inputmode="decimal" value="${hh.list_price??""}">
+      ${currencySeg("hf_lcur")}
+      <label>${t("public_desc")}</label><textarea id="hf_pdesc" rows="2">${esc(hh.public_desc||"")}</textarea>
+      <label>${t("public_show")}</label>
+      <div class="seg" id="hf_pub">
+        <button type="button" data-v="1">✅</button>
+        <button type="button" data-v="0">🚫</button></div>
       <label>${t("notes")}</label><textarea id="hf_notes" rows="2">${esc(hh.notes||"")}</textarea>
       <button class="btn" onclick="saveHouse(${id||"null"})">${t("save")}</button>
       <button class="btn secondary" onclick="closeModal()">${t("cancel")}</button>`);
     segInit("hf_deal", hh.deal_type || "rent");
     segInit("hf_cur", hh.purchase_currency || "USD");
+    segInit("hf_lcur", hh.list_currency || "USD");
+    segInit("hf_pub", String(hh.public ?? 1));
   };
   if (id) api("/api/houses/"+id).then(build).catch(e=>toast(e.message));
   else build({});
@@ -726,12 +781,18 @@ async function saveHouse(id){
   const priceRaw = document.getElementById("hf_price").value.trim().replace(/\s/g,"").replace(",",".");
   const price = priceRaw ? parseFloat(priceRaw) : null;
   if (priceRaw && isNaN(price)){ toast(t("required")); return; }
+  const lpriceRaw = document.getElementById("hf_lprice").value.trim().replace(/\s/g,"").replace(",",".");
+  const lprice = lpriceRaw ? parseFloat(lpriceRaw) : null;
   const body = {
     address, district: document.getElementById("hf_district").value.trim() || null,
     deal_type: segVal("hf_deal"),
     purchase_price: price, purchase_currency: price != null ? segVal("hf_cur") : null,
     owner_name: document.getElementById("hf_owner").value.trim() || null,
     owner_phone: document.getElementById("hf_ophone").value.trim() || null,
+    list_price: (lprice != null && !isNaN(lprice)) ? lprice : null,
+    list_currency: (lprice != null && !isNaN(lprice)) ? segVal("hf_lcur") : null,
+    public: parseInt(segVal("hf_pub") || "1"),
+    public_desc: document.getElementById("hf_pdesc").value.trim() || null,
     notes: document.getElementById("hf_notes").value.trim() || null,
   };
   try {
@@ -879,6 +940,114 @@ async function saveSold(hid){
       buyer: document.getElementById("so_buyer").value.trim() || null });
     toast(t("saved")); refreshHouse(hid);
   } catch(e){ toast(e.message); }
+}
+
+/* ---------- utility accounts ---------- */
+function copyVal(btn){
+  const v = btn.dataset.v;
+  (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject())
+    .then(()=>toast(t("copied")))
+    .catch(()=>{ prompt("Copy:", v); });
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest(".accval");
+  if (el && el.dataset.mask){
+    el.textContent = el.textContent === "••••••" ? el.dataset.v : "••••••";
+  }
+});
+function openAccountForm(hid){
+  modal(`<h3>🔐 ${t("add_account")}</h3>
+    <label>${t("acc_label")} *</label><input id="ac_label">
+    <label>${t("acc_no")}</label><input id="ac_no">
+    <label>${t("acc_login")}</label><input id="ac_login" autocomplete="off">
+    <label>${t("acc_pass")}</label><input id="ac_pass" autocomplete="off">
+    <label>${t("note")}</label><input id="ac_note">
+    <button class="btn" onclick="saveAccount(${hid})">${t("save")}</button>
+    <button class="btn secondary" onclick="closeModal()">${t("cancel")}</button>`);
+}
+async function saveAccount(hid){
+  const label = document.getElementById("ac_label").value.trim();
+  if (!label){ toast(t("required")); return; }
+  try {
+    await api(`/api/houses/${hid}/accounts`,"POST",{
+      label,
+      account_no: document.getElementById("ac_no").value.trim() || null,
+      login: document.getElementById("ac_login").value.trim() || null,
+      password: document.getElementById("ac_pass").value || null,
+      note: document.getElementById("ac_note").value.trim() || null });
+    toast(t("added")); refreshHouse(hid);
+  } catch(e){ toast(e.message); }
+}
+async function delAccount(aid, hid){
+  if (!confirm("OK?")) return;
+  try { await api("/api/accounts/"+aid,"DELETE"); refreshHouse(hid); } catch(e){ toast(e.message); }
+}
+
+/* ---------- tasks ---------- */
+function taskRowHtml(tk, refreshHid){
+  const today = new Date().toISOString().slice(0,10);
+  const overdue = tk.due_date && !tk.done && tk.due_date < today;
+  const ref = refreshHid ? `refreshHouse(${refreshHid})` : `renderTasks()`;
+  return `<div class="list-line row">
+    <div style="display:flex;gap:10px;align-items:flex-start;min-width:0">
+      <button onclick="toggleTask(${tk.id},'${ref.replace(/'/g,"\\'")}')" style="background:none;border:1.6px solid ${tk.done?'var(--emerald)':'var(--border2)'};
+        border-radius:7px;width:24px;height:24px;min-width:24px;color:var(--emerald);font-size:14px;line-height:1">${tk.done?"✓":""}</button>
+      <div style="min-width:0">
+        <div style="${tk.done?'text-decoration:line-through;color:var(--muted)':''}">${esc(tk.title)}</div>
+        <div class="muted" style="font-size:12px">
+          ${tk.address && !refreshHid ? `🏠 ${esc(tk.address)} · ` : ""}
+          ${tk.due_date ? `📅 ${fmtDate(tk.due_date)}` : ""}
+          ${overdue ? ` <span class="chip red">${t("overdue")}</span>` : ""}
+        </div></div></div>
+    <button class="btn small danger" onclick="delTask(${tk.id},'${ref.replace(/'/g,"\\'")}')">✕</button></div>`;
+}
+async function toggleTask(id, ref){
+  try { await api(`/api/tasks/${id}/toggle`,"POST"); eval(ref); } catch(e){ toast(e.message); }
+}
+async function delTask(id, ref){
+  try { await api("/api/tasks/"+id,"DELETE"); eval(ref); } catch(e){ toast(e.message); }
+}
+function openTaskForm(hid){
+  const houseOpts = STATE.houses.map(h =>
+    `<option value="${h.id}" ${hid===h.id?'selected':''}>${esc(h.address)}</option>`).join("");
+  modal(`<h3>📋 ${t("add_task")}</h3>
+    <label>${t("task_title")} *</label><input id="tk_title">
+    <label>${t("task_house")}</label>
+    <select id="tk_house"><option value="">— ${t("no_house")} —</option>${houseOpts}</select>
+    <label>${t("task_due")}</label><input id="tk_due" type="date">
+    <button class="btn" onclick="saveTask(${hid||"null"})">${t("save")}</button>
+    <button class="btn secondary" onclick="closeModal()">${t("cancel")}</button>`);
+}
+async function saveTask(fromHouse){
+  const title = document.getElementById("tk_title").value.trim();
+  if (!title){ toast(t("required")); return; }
+  const hv = document.getElementById("tk_house").value;
+  try {
+    await api("/api/tasks","POST",{ title,
+      house_id: hv ? parseInt(hv) : null,
+      due_date: document.getElementById("tk_due").value || null });
+    toast(t("added"));
+    if (fromHouse) refreshHouse(fromHouse);
+    else { closeModal(); renderTasks(); }
+  } catch(e){ toast(e.message); }
+}
+async function renderTasks(){
+  const c = document.getElementById("content");
+  c.innerHTML = `<div class="empty">…</div>`;
+  let tasks;
+  try {
+    if (!STATE.houses.length){ try { STATE.houses = await api("/api/houses?flt=all"); } catch(e){} }
+    tasks = await api("/api/tasks");
+  } catch(e){ toast(e.message); return; }
+  const open = tasks.filter(x=>!x.done), done = tasks.filter(x=>x.done).slice(0,15);
+  let html = `<button class="btn" style="margin-top:0" onclick="openTaskForm(null)">➕ ${t("add_task")}</button>`;
+  html += `<div class="card" style="margin-top:12px">` +
+    (open.length ? open.map(tk => taskRowHtml(tk, null)).join("") : `<div class="empty" style="padding:16px">${t("no_tasks")}</div>`) + `</div>`;
+  if (done.length){
+    html += `<div class="section-title">✅ ${t("done_tasks")}</div><div class="card">` +
+      done.map(tk => taskRowHtml(tk, null)).join("") + `</div>`;
+  }
+  c.innerHTML = html;
 }
 
 /* ================= tenants tab ================= */
@@ -1086,6 +1255,17 @@ async function renderSettings(){
     ${u.tg_enabled?`<button class="btn secondary" onclick="testTg()">🔔 ${t("tg_test")}</button>`:""}
   </div>`;
   if (u.role === "admin"){
+    html += `<div class="section-title">🌐 ${t("share_title")}</div><div class="card">
+      <div class="muted" style="font-size:12.5px">${t("share_hint")}</div>
+      <label>${t("agency_name_l")}</label><input id="org_name">
+      <label>${t("contact_phone_l")}</label><input id="org_phone" inputmode="tel">
+      <button class="btn" onclick="saveOrg()">${t("save")}</button>
+      <div class="btn-row">
+        <button class="btn small secondary" onclick="copyVal(this)" data-v="${location.origin}/share">📋 ${t("copy_link")}</button>
+        <button class="btn small secondary" onclick="window.open('/share','_blank')">🔗 ${t("open_link")}</button>
+      </div>
+      <div class="muted" style="margin-top:8px;font-size:12.5px;word-break:break-all">${location.origin}/share</div>
+    </div>`;
     html += `<div class="section-title">👥 ${t("users")}</div><div class="card" id="usersCard">…</div>
     <div class="card">
       <label>${t("username")}</label><input id="nu_user" autocomplete="off">
@@ -1101,7 +1281,22 @@ async function renderSettings(){
   html += `<button class="btn danger" onclick="logout()">🚪 ${t("logout")}</button>`;
   c.innerHTML = html;
   segInit("st_lang", LANG);
-  if (u.role === "admin"){ segInit("nu_role","user"); loadUsers(); }
+  if (u.role === "admin"){
+    segInit("nu_role","user"); loadUsers();
+    api("/api/org").then(o => {
+      const n = document.getElementById("org_name"), p = document.getElementById("org_phone");
+      if (n) n.value = o.agency_name || "";
+      if (p) p.value = o.contact_phone || "";
+    }).catch(()=>{});
+  }
+}
+async function saveOrg(){
+  try {
+    await api("/api/org","POST",{
+      agency_name: document.getElementById("org_name").value.trim(),
+      contact_phone: document.getElementById("org_phone").value.trim() });
+    toast(t("saved"));
+  } catch(e){ toast(e.message); }
 }
 async function loadUsers(){
   try {

@@ -180,6 +180,10 @@ class HouseIn(BaseModel):
     owner_name: str | None = None
     owner_phone: str | None = None
     notes: str | None = None
+    list_price: float | None = None
+    list_currency: str | None = None
+    public: int = 1
+    public_desc: str | None = None
 
 
 def house_full(hid):
@@ -199,6 +203,8 @@ def house_full(hid):
         d["tenant"]["paid_this_month"] = db.payment_exists(tnt["id"], today.year, today.month)
     d["history"] = db.rows_to_dicts(db.tenant_history(hid))
     d["photos"] = db.rows_to_dicts(db.list_photos(hid))
+    d["accounts"] = db.rows_to_dicts(db.list_accounts(hid))
+    d["tasks"] = db.rows_to_dicts(db.list_tasks(hid, include_done=False))
     # profit for sold house (same currency only)
     if d["status"] == "sold" and d["sale_price"] and d["purchase_price"] \
             and d["purchase_currency"] == d["sale_currency"]:
@@ -439,6 +445,97 @@ def api_photo_delete(pid: int, user=Depends(current_user)):
             pass
         db.delete_photo(pid)
     return {"ok": True}
+
+
+# ------------------- utility accounts -------------------
+class AccountIn(BaseModel):
+    label: str
+    account_no: str | None = None
+    login: str | None = None
+    password: str | None = None
+    note: str | None = None
+
+
+@app.post("/api/houses/{hid}/accounts")
+def api_account_add(hid: int, body: AccountIn, user=Depends(current_user)):
+    if not db.get_house(hid):
+        raise HTTPException(404, "house not found")
+    db.add_account(hid, body.label, body.account_no, body.login, body.password, body.note)
+    return {"accounts": db.rows_to_dicts(db.list_accounts(hid))}
+
+
+@app.delete("/api/accounts/{aid}")
+def api_account_delete(aid: int, user=Depends(current_user)):
+    db.delete_account(aid)
+    return {"ok": True}
+
+
+# ------------------- tasks -------------------
+class TaskIn(BaseModel):
+    title: str
+    house_id: int | None = None
+    due_date: str | None = None
+
+
+@app.get("/api/tasks")
+def api_tasks(user=Depends(current_user)):
+    return db.rows_to_dicts(db.list_tasks())
+
+
+@app.post("/api/tasks")
+def api_task_add(body: TaskIn, user=Depends(current_user)):
+    if not body.title.strip():
+        raise HTTPException(400, "empty title")
+    if body.house_id and not db.get_house(body.house_id):
+        raise HTTPException(404, "house not found")
+    db.add_task(body.title.strip(), body.house_id, body.due_date)
+    return {"ok": True}
+
+
+@app.post("/api/tasks/{tid}/toggle")
+def api_task_toggle(tid: int, user=Depends(current_user)):
+    db.toggle_task(tid)
+    return {"ok": True}
+
+
+@app.delete("/api/tasks/{tid}")
+def api_task_delete(tid: int, user=Depends(current_user)):
+    db.delete_task(tid)
+    return {"ok": True}
+
+
+# ------------------- public share page -------------------
+class OrgIn(BaseModel):
+    contact_phone: str | None = None
+    agency_name: str | None = None
+
+
+@app.get("/api/org")
+def api_org_get(user=Depends(current_user)):
+    return {"contact_phone": db.get_setting("contact_phone", ""),
+            "agency_name": db.get_setting("agency_name", "")}
+
+
+@app.post("/api/org")
+def api_org_set(body: OrgIn, user=Depends(admin_user)):
+    if body.contact_phone is not None:
+        db.set_setting("contact_phone", body.contact_phone.strip())
+    if body.agency_name is not None:
+        db.set_setting("agency_name", body.agency_name.strip())
+    return {"ok": True}
+
+
+@app.get("/api/public/listings")
+def api_public_listings():
+    """NO AUTH — only safe, public fields."""
+    return {"listings": db.public_listings(),
+            "contact_phone": db.get_setting("contact_phone", ""),
+            "agency_name": db.get_setting("agency_name", "")}
+
+
+@app.get("/share")
+def share_page():
+    return FileResponse(os.path.join(STATIC, "share.html"))
 
 
 # ------------------- analytics -------------------

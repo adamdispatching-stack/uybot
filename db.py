@@ -90,7 +90,36 @@ CREATE TABLE IF NOT EXISTS photos (
     filename    TEXT NOT NULL,
     created_at  TEXT DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS accounts (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    house_id    INTEGER NOT NULL REFERENCES houses(id) ON DELETE CASCADE,
+    label       TEXT NOT NULL,
+    account_no  TEXT,
+    login       TEXT,
+    password    TEXT,
+    note        TEXT
+);
+CREATE TABLE IF NOT EXISTS tasks (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    house_id    INTEGER REFERENCES houses(id) ON DELETE CASCADE,
+    title       TEXT NOT NULL,
+    due_date    TEXT,
+    done        INTEGER DEFAULT 0,
+    done_at     TEXT,
+    created_at  TEXT DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS settings (
+    key         TEXT PRIMARY KEY,
+    value       TEXT
+);
 """
+
+HOUSE_MIGRATIONS = [
+    ("list_price", "REAL"),
+    ("list_currency", "TEXT"),
+    ("public", "INTEGER DEFAULT 1"),
+    ("public_desc", "TEXT"),
+]
 
 
 def conn():
@@ -103,6 +132,22 @@ def conn():
 def init_db():
     with conn() as c:
         c.executescript(SCHEMA)
+        cols = {r["name"] for r in c.execute("PRAGMA table_info(houses)").fetchall()}
+        for name, ddl in HOUSE_MIGRATIONS:
+            if name not in cols:
+                c.execute(f"ALTER TABLE houses ADD COLUMN {name} {ddl}")
+
+
+def get_setting(key, default=None):
+    with conn() as c:
+        row = c.execute("SELECT value FROM settings WHERE key=?", (key,)).fetchone()
+        return row["value"] if row else default
+
+
+def set_setting(key, value):
+    with conn() as c:
+        c.execute("INSERT INTO settings (key, value) VALUES (?,?) "
+                  "ON CONFLICT(key) DO UPDATE SET value=excluded.value", (key, value))
 
 
 def rows_to_dicts(rows):
@@ -198,7 +243,8 @@ def delete_session(token):
 
 # ---------------- houses ----------------
 HOUSE_FIELDS = ["address", "district", "deal_type", "status", "purchase_price",
-                "purchase_currency", "purchase_date", "owner_name", "owner_phone", "notes"]
+                "purchase_currency", "purchase_date", "owner_name", "owner_phone", "notes",
+                "list_price", "list_currency", "public", "public_desc"]
 
 
 def add_house(**kw):
@@ -450,6 +496,86 @@ def first_photos():
             p = c.execute("SELECT filename FROM photos WHERE id=?", (r["mid"],)).fetchone()
             if p:
                 out[r["house_id"]] = p["filename"]
+        return out
+
+
+# ---------------- utility accounts ----------------
+def add_account(house_id, label, account_no, login, password, note):
+    with conn() as c:
+        c.execute("""INSERT INTO accounts (house_id,label,account_no,login,password,note)
+                     VALUES (?,?,?,?,?,?)""",
+                  (house_id, label, account_no, login, password, note))
+
+
+def list_accounts(house_id):
+    with conn() as c:
+        return c.execute("SELECT * FROM accounts WHERE house_id=? ORDER BY id", (house_id,)).fetchall()
+
+
+def delete_account(aid):
+    with conn() as c:
+        c.execute("DELETE FROM accounts WHERE id=?", (aid,))
+
+
+# ---------------- tasks ----------------
+def add_task(title, house_id=None, due_date=None):
+    with conn() as c:
+        cur = c.execute("INSERT INTO tasks (title, house_id, due_date) VALUES (?,?,?)",
+                        (title, house_id, due_date))
+        return cur.lastrowid
+
+
+def list_tasks(house_id=None, include_done=True):
+    q = """SELECT t.*, h.address FROM tasks t LEFT JOIN houses h ON h.id=t.house_id"""
+    args = []
+    if house_id is not None:
+        q += " WHERE t.house_id=?"
+        args.append(house_id)
+    q += """ ORDER BY t.done, CASE WHEN t.due_date IS NULL THEN 1 ELSE 0 END,
+             t.due_date, t.id DESC"""
+    with conn() as c:
+        rows = c.execute(q, args).fetchall()
+    if not include_done:
+        rows = [r for r in rows if not r["done"]]
+    return rows
+
+
+def toggle_task(tid):
+    from datetime import date as _date
+    with conn() as c:
+        row = c.execute("SELECT done FROM tasks WHERE id=?", (tid,)).fetchone()
+        if row:
+            new = 0 if row["done"] else 1
+            c.execute("UPDATE tasks SET done=?, done_at=? WHERE id=?",
+                      (new, _date.today().isoformat() if new else None, tid))
+
+
+def delete_task(tid):
+    with conn() as c:
+        c.execute("DELETE FROM tasks WHERE id=?", (tid,))
+
+
+def due_tasks(today_iso):
+    with conn() as c:
+        return c.execute("""SELECT t.*, h.address FROM tasks t
+                            LEFT JOIN houses h ON h.id=t.house_id
+                            WHERE t.done=0 AND t.due_date IS NOT NULL AND t.due_date<=?
+                            ORDER BY t.due_date""", (today_iso,)).fetchall()
+
+
+# ---------------- public listings ----------------
+def public_listings():
+    with conn() as c:
+        houses = c.execute("""SELECT id, address, district, deal_type, list_price,
+                              list_currency, public_desc FROM houses
+                              WHERE status='available' AND COALESCE(public,1)=1
+                              ORDER BY id DESC""").fetchall()
+        out = []
+        for h in houses:
+            d = dict(h)
+            d["photos"] = [p["filename"] for p in c.execute(
+                "SELECT filename FROM photos WHERE house_id=? ORDER BY id", (h["id"],)).fetchall()]
+            out.append(d)
         return out
 
 
